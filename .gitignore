@@ -1,0 +1,6 @@
+.build/
+**/target/
+node_modules/
+artifacts/
+.DS_Store
+archive/

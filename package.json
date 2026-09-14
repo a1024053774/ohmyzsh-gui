@@ -1,0 +1,10 @@
+{
+  "name": "ohmyzsh-gui",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cross-platform Oh My Zsh configuration and plugin manager",
+  "scripts": {
+    "dev": "python3 -m http.server 1420 --directory src",
+    "check": "node --check src/app.js"
+  }
+}

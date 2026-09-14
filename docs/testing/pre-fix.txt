@@ -1,0 +1,38 @@
+   Compiling ohmyzsh-gui v0.1.0 (/Users/luckye/Documents/ohmyzsh-gui/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.91s
+     Running unittests src/main.rs (src-tauri/target/debug/deps/ohmyzsh_gui-41fd6fd14d028428)
+
+running 3 tests
+test regression::changing_theme_preserves_other_variables ... FAILED
+test regression::parent_directory_is_never_a_repository_name ... FAILED
+test regression::comments_are_not_enabled_plugins ... FAILED
+
+failures:
+
+---- regression::changing_theme_preserves_other_variables stdout ----
+
+thread 'regression::changing_theme_preserves_other_variables' (2807901) panicked at src/main.rs:396:9:
+assertion failed: result.contains("ZSH_THEME_RANDOM_CANDIDATES=(one two)")
+
+---- regression::parent_directory_is_never_a_repository_name stdout ----
+
+thread 'regression::parent_directory_is_never_a_repository_name' (2807903) panicked at src/main.rs:388:56:
+assertion failed: !safe_component("..")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- regression::comments_are_not_enabled_plugins stdout ----
+
+thread 'regression::comments_are_not_enabled_plugins' (2807902) panicked at src/main.rs:391:9:
+assertion `left == right` failed
+  left: ["git", "keep", "git", "enabled", "brew"]
+ right: ["git", "brew"]
+
+
+failures:
+    regression::changing_theme_preserves_other_variables
+    regression::comments_are_not_enabled_plugins
+    regression::parent_directory_is_never_a_repository_name
+
+test result: FAILED. 0 passed; 3 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--bin ohmyzsh-gui`

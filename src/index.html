@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f7f7f7" />
+  <title>ohmyzsh-gui</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <aside class="sidebar" aria-label="Primary navigation">
+      <div class="brand"><span class="brand-mark">⌘</span><span>ohmyzsh-gui</span></div>
+      <nav class="nav-list">
+        <button class="nav-item active" data-section="overview"><span>▦</span>Overview</button>
+        <button class="nav-item" data-section="configuration"><span>☷</span>Configuration</button>
+        <button class="nav-item" data-section="discover"><span>⌕</span>Discover</button>
+        <button class="nav-item" data-section="updates"><span>↻</span>Updates <b class="count" id="updates-count">0</b></button>
+        <button class="nav-item" data-section="activity"><span>◷</span>Activity</button>
+      </nav>
+      <div class="sidebar-footer"><button class="plain-button" id="settings-button">⚙ Settings</button><span class="version">MVP 0.1</span></div>
+    </aside>
+
+    <section class="workspace">
+      <header class="toolbar">
+        <div><h1 id="page-title">Overview</h1><p id="page-subtitle">Review your shell setup before making a change.</p></div>
+        <div class="toolbar-actions"><button class="icon-button" id="refresh-button" title="Refresh configuration">↻</button><label class="search"><span>⌕</span><input id="global-search" type="search" placeholder="Search plugins" /></label></div>
+      </header>
+      <div id="content" class="content"></div>
+      <footer class="statusbar"><span class="status-dot" id="status-dot"></span><span id="status-text">Ready</span><span class="spacer"></span><span class="muted">Changes are previewed before Apply</span></footer>
+    </section>
+  </main>
+  <dialog id="confirm-dialog" class="modal"><form method="dialog"><h2 id="confirm-title">Apply change?</h2><p id="confirm-message"></p><div class="modal-actions"><button value="cancel" class="secondary">Cancel</button><button value="confirm" class="primary">Apply</button></div></form></dialog>
+  <dialog id="settings-dialog" class="modal"><form method="dialog" id="settings-form"><h2>Settings</h2><label class="field-label" for="github-token">GitHub token <span class="muted">optional</span></label><input id="github-token" type="password" autocomplete="off" placeholder="ghp_…" /><p class="hint">Without a token, GitHub search still works with public rate limits. The token stays local to this app.</p><div class="modal-actions"><button value="cancel" class="secondary">Cancel</button><button value="save" class="primary">Save</button></div></form></dialog>
+  <script src="app.js" type="module"></script>
+</body>
+</html>

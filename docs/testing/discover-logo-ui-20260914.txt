@@ -1,0 +1,20 @@
+# Discover and logo UI verification — 2026-09-14
+
+## Scope
+
+- Added the supplied `logo/logo_dark.png` and `logo/logo_light.png` to the frontend brand and favicon.
+- Generated Tauri desktop bundle icons from the supplied logo for macOS, Windows, and Linux targets.
+- Discover now includes source, availability, and sort controls.
+- GitHub results display a star icon with formatted counts, description, license, and update date in the result/detail views.
+
+## Verification
+
+- `npm run check`: PASS
+- `cargo fmt --manifest-path src-tauri/Cargo.toml -- --check`: PASS
+- `cargo test --manifest-path src-tauri/Cargo.toml`: PASS — 11 passed, 1 ignored live GitHub smoke test
+- `cargo tauri build --debug --bundles app`: PASS — debug macOS app bundle created
+- Native debug app visual check: PASS — supplied logo visible in the sidebar; existing GitHub recommendation results showed live star counts, descriptions, source, license, and update timestamp.
+
+## Notes
+
+The live Discover request uses the configured GitHub credential when present and anonymous public API access otherwise. The UI remains read-only until the user reviews and confirms an install/update operation.

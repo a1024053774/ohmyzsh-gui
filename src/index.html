@@ -4,13 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#f7f7f7" />
+  <link rel="icon" href="logo.png" type="image/png" />
   <title>ohmyzsh-gui</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <main class="app-shell">
     <aside class="sidebar" aria-label="Primary navigation">
-      <div class="brand"><span class="brand-mark">⌘</span><span>ohmyzsh-gui</span></div>
+      <div class="brand"><picture class="brand-logo"><source media="(prefers-color-scheme: light)" srcset="logo_light.png" /><img src="logo.png" alt="" /></picture><span>ohmyzsh-gui</span></div>
       <nav class="nav-list">
         <button class="nav-item active" data-section="overview"><span>▦</span>Overview</button>
         <button class="nav-item" data-section="installed"><span>▣</span>Installed</button>

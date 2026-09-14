@@ -30,3 +30,11 @@ Preserve unknown text, comments, permissions, symlinks and stale-edit detection.
 ## Current unknowns
 
 Cross-platform runtime is only available on this Mac. Windows WSL and Linux adapters can be implemented and checked structurally here; on-device runs remain NOT_RUN until a runner exists. Keep the overall goal active while required evidence is missing.
+
+## Current evidence
+
+- Focused red state preserved in `docs/testing/pre-fix.txt`: three parser/path tests failed before the fix for `..`, inline comments, and a similarly named theme variable.
+- Green state in `docs/testing/post-fix.txt`: eight Rust tests, including isolated backup/syntax failure tests, passed; `cargo check` passed.
+- `node --check src/app.js` passed.
+- Cross-platform CI definition added at `.github/workflows/ci.yml`; it has not run in this local session.
+- Browser preview was previously visually inspected, but the latest refresh was blocked by the browser's localhost navigation policy after the temporary server ended. Current visual evidence is therefore INCOMPLETE for this revision.

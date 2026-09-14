@@ -15,6 +15,7 @@ pub struct Snapshot {
     pub zsh_available: bool,
     pub platform: String,
     pub plugin_root: String,
+    pub installed_custom: Vec<String>,
 }
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Preview {
@@ -160,6 +161,15 @@ impl Manager {
             zsh_available: self.env.tool_available("zsh"),
             platform: self.env.label.clone(),
             plugin_root: self.env.custom.join("plugins").display().to_string(),
+            installed_custom: fs::read_dir(self.env.custom.join("plugins"))
+                .ok()
+                .into_iter()
+                .flatten()
+                .filter_map(|e| e.ok())
+                .filter(|e| e.file_type().map(|t| t.is_dir()).unwrap_or(false))
+                .filter_map(|e| e.file_name().to_str().map(String::from))
+                .filter(|n| config::component(n))
+                .collect(),
         })
     }
     fn cap(&mut self) -> Result<Capability, String> {

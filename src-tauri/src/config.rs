@@ -1,11 +1,7 @@
 use regex::Regex;
 use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
 use std::ops::Range;
 
-pub fn digest(s: &str) -> String {
-    format!("{:x}", Sha256::digest(s.as_bytes()))
-}
 pub fn component(s: &str) -> bool {
     !s.is_empty()
         && s.len() <= 100
@@ -38,7 +34,6 @@ pub struct Document {
     theme: Option<Scalar>,
     plugin_tokens: Vec<Scalar>,
     close: Option<usize>,
-    pub prefixes: Vec<usize>,
 }
 
 fn pattern(name: &str) -> Regex {
@@ -90,7 +85,6 @@ pub fn literal_path(source: &str, name: &str) -> Result<Option<String>, String> 
 impl Document {
     pub fn parse(source: String) -> Self {
         let mut warnings = vec![];
-        let mut prefixes = vec![];
         let theme = match scalar(&source, "ZSH_THEME") {
             Ok(x) => x,
             Err(e) => {
@@ -98,9 +92,7 @@ impl Document {
                 None
             }
         };
-        if let Some(m) = pattern("ZSH_THEME").find(&source) {
-            prefixes.push(m.start());
-        }
+        if let Some(m) = pattern("ZSH_THEME").find(&source) {}
         let re = pattern("plugins");
         let matches: Vec<_> = re.captures_iter(&source).collect();
         let mut tokens = vec![];
@@ -109,7 +101,6 @@ impl Document {
             warnings.push("plugins must have one top-level literal array assignment".into());
         } else {
             let m = matches[0].get(0).unwrap();
-            prefixes.push(m.start());
             let start = m.end();
             let bytes = source.as_bytes();
             if bytes.get(start) != Some(&b'(') {
@@ -196,7 +187,6 @@ impl Document {
             theme,
             plugin_tokens: tokens,
             close,
-            prefixes,
         }
     }
     pub fn edit(&self, values: &Values) -> Result<String, String> {

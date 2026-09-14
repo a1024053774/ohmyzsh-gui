@@ -626,6 +626,17 @@ impl Manager {
                 if !path.is_dir() {
                     return Err("Installed checkout is missing".into());
                 }
+                let document = Document::parse(self.env.source()?);
+                if document
+                    .values
+                    .plugins
+                    .iter()
+                    .any(|name| name == &repo.name)
+                {
+                    return Err(
+                        "Disable this plugin in .zshrc before undoing its installation".into(),
+                    );
+                }
                 self.env.repo_clean(&path)?;
                 let quarantine = self.env.env_quarantine(&repo.name, &operation_id)?;
                 fs::rename(&path, &quarantine).map_err(|e| e.to_string())?;
@@ -904,5 +915,43 @@ mod tests {
         assert_eq!(fs::read_to_string(config_path).unwrap(), original);
         assert!(!manager.journal[0].undo_available);
         assert_eq!(manager.journal[1].operation, "undo");
+    }
+
+    #[test]
+    fn undo_install_refuses_enabled_plugin() {
+        let dir = tempfile::tempdir().unwrap();
+        let home = dir.path().to_path_buf();
+        fs::write(
+            home.join(".zshrc"),
+            "ZSH_THEME=\"old\"\nplugins=(example)\n",
+        )
+        .unwrap();
+        let env = Environment::at(home.clone()).unwrap();
+        let plugin = env.custom.join("plugins/example");
+        fs::create_dir_all(plugin.join(".git")).unwrap();
+        let mut manager = Manager {
+            env,
+            plans: HashMap::new(),
+            journal: vec![History {
+                id: "install-1".into(),
+                at: 1,
+                operation: "install".into(),
+                status: "applied".into(),
+                files: vec![plugin.display().to_string()],
+                backup: None,
+                undo_available: true,
+                repo: Some(Repo {
+                    owner: "example".into(),
+                    name: "example".into(),
+                }),
+                commit: Some("0123456789012345678901234567890123456789".into()),
+                previous_commit: None,
+                error: None,
+            }],
+            journal_path: dir.path().join("history.json"),
+        };
+        let error = manager.undo("install-1").unwrap_err();
+        assert!(error.contains("Disable this plugin"));
+        assert!(plugin.exists());
     }
 }

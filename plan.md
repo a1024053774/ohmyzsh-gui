@@ -34,7 +34,7 @@ Cross-platform runtime is only available on this Mac. Windows WSL and Linux adap
 ## Current evidence
 
 - Focused red state preserved in `docs/testing/pre-fix.txt`: three parser/path tests failed before the fix for `..`, inline comments, and a similarly named theme variable.
-- Green state in `docs/testing/post-fix.txt`: eight Rust tests, including isolated backup/syntax failure tests, passed; `cargo check` passed. The current suite is nine tests after adding history SHA/repository compatibility coverage.
+- Green state in `docs/testing/post-fix.txt`: eight Rust tests, including isolated backup/syntax failure tests, passed; `cargo check` passed. The current suite is eleven tests after adding history SHA, configuration restore, and enabled-plugin safety coverage.
 - `node --check src/app.js` passed.
 - Cross-platform CI definition added at `.github/workflows/ci.yml`; it has not run in this local session.
 - Browser preview was visually inspected before the final backend/UI hardening; the browser's localhost navigation policy blocked an exact-revision refresh. The built Tauri app was then launched and inspected directly, so exact-revision native visual evidence is PASS.

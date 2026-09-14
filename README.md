@@ -18,4 +18,4 @@ The app never changes `.zshrc` without an explicit Apply action. It creates a ba
 
 ## Validation
 
-`node --check src/app.js` and `cargo test --manifest-path src-tauri/Cargo.toml` validate the frontend syntax and Rust parsing/safety core. `cargo check --manifest-path src-tauri/Cargo.toml` validates the Tauri backend. The current Rust suite has 9 tests; `cargo tauri build --debug --bundles app` produces the local macOS `.app` bundle. Full signing and DMG distribution require additional platform SDKs and signing setup.
+`node --check src/app.js` and `cargo test --manifest-path src-tauri/Cargo.toml` validate the frontend syntax and Rust parsing/safety core. `cargo check --manifest-path src-tauri/Cargo.toml` validates the Tauri backend. The current Rust suite has 11 tests; `cargo tauri build --debug --bundles app` produces the local macOS `.app` bundle. Full signing and DMG distribution require additional platform SDKs and signing setup.

@@ -6,7 +6,7 @@ A personal cross-platform desktop MVP for inspecting and safely managing `.zshrc
 
 The app uses Tauri 2 with a Rust core and a lightweight HTML/CSS/JavaScript frontend. Rust owns file access, syntax validation, backups, Git operations, and token storage; the frontend provides an Apple-inspired sidebar, list/detail marketplace, update review, badges, toolbar, keyboard-friendly controls, and light/dark system appearance.
 
-The layout follows the Apple Human Interface Guidelines for [sidebars](https://developer.apple.com/design/human-interface-guidelines/sidebars), [settings](https://developer.apple.com/design/human-interface-guidelines/settings), [toolbars](https://developer.apple.com/design/human-interface-guidelines/toolbars), and [feedback](https://developer.apple.com/design/human-interface-guidelines/feedback), with the supplied Homebrew window as a practical reference.
+The layout follows the Apple Human Interface Guidelines for [sidebars](https://developer.apple.com/design/human-interface-guidelines/sidebars), [settings](https://developer.apple.com/design/human-interface-guidelines/settings), [toolbars](https://developer.apple.com/design/human-interface-guidelines/toolbars), and [feedback](https://developer.apple.com/design/human-interface-guidelines/feedback), with the supplied Homebrew window as a practical reference. Discover loads GitHub recommendations by star count and supports source and freshness sorting, while each result shows its description, stars, license, and update time.
 
 ## Run
 

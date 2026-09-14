@@ -13,7 +13,7 @@ A personal, local-only cross-platform desktop application. The primary implement
 - Main window uses a macOS sidebar for `Overview`, `Configuration`, `Plugin Marketplace`, and `Activity`.
 - The marketplace uses a searchable list plus a detail pane. Each plugin shows source, repository, license when verified, version/ref, install state, enabled state, README link, and last checked time.
 - Configuration presents parsed `.zshrc` settings as structured rows while preserving an escape hatch to inspect the exact source and diff.
-- Install/update/uninstall flows show a preflight summary and diff, then progress and a durable result. Backups and undo/restore are first-class actions.
+- Install/update/uninstall flows show a preflight summary and diff, then progress and a durable result. Backups and undo/restore are first-class actions where the journal has a tested restore path; update restore waits for previous-SHA persistence.
 - Settings uses a standard macOS settings window with a stable toolbar and panes.
 
 The owner accepted this direction and asked implementation to begin.

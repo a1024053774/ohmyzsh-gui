@@ -439,7 +439,7 @@ impl Manager {
             Some(b.clone()),
             None,
             None,
-            false,
+            true,
             None,
         )?;
         Ok(Applied {
@@ -447,7 +447,7 @@ impl Manager {
             status: "applied".into(),
             backup: Some(b.display().to_string()),
             commit: None,
-            undo_available: false,
+            undo_available: true,
         })
     }
     fn apply_install(&mut self, id: &str, p: &Plan) -> Result<Applied, String> {
@@ -483,7 +483,7 @@ impl Manager {
             None,
             Some(repo.clone()),
             Some(got.clone()),
-            false,
+            true,
             None,
         )?;
         Ok(Applied {
@@ -491,7 +491,7 @@ impl Manager {
             status: "installed".into(),
             backup: None,
             commit: Some(got),
-            undo_available: false,
+            undo_available: true,
         })
     }
     fn apply_update(&mut self, id: &str, p: &Plan) -> Result<Applied, String> {
@@ -547,7 +547,7 @@ impl Manager {
             Some(backup.clone()),
             Some(repo.clone()),
             Some(p.target.clone().unwrap_or_default()),
-            false,
+            true,
             None,
         )?;
         Ok(Applied {
@@ -555,7 +555,7 @@ impl Manager {
             status: "removed (quarantined; manual restore is required)".into(),
             backup: Some(backup.display().to_string()),
             commit: None,
-            undo_available: false,
+            undo_available: true,
         })
     }
     fn record(
@@ -583,6 +583,95 @@ impl Manager {
             error,
         });
         self.save_history()
+    }
+    fn undo(&mut self, history_id: &str) -> Result<Applied, String> {
+        let index = self
+            .journal
+            .iter()
+            .position(|h| h.id == history_id)
+            .ok_or("History entry not found")?;
+        let history = self.journal[index].clone();
+        if !history.undo_available {
+            return Err("This operation cannot be restored automatically".into());
+        }
+        let operation_id = system::id();
+        let mut files = history.files.clone();
+        let mut backup = None;
+        match history.operation.as_str() {
+            "configuration" => {
+                let backup_path = history
+                    .backup
+                    .as_deref()
+                    .ok_or("Configuration backup missing")?;
+                let restored = fs::read_to_string(backup_path).map_err(|e| e.to_string())?;
+                let current = self.env.source()?;
+                backup = Some(self.env.write_config(&current, &restored)?);
+            }
+            "install" => {
+                let repo = history
+                    .repo
+                    .as_ref()
+                    .ok_or("Plugin repository metadata missing")?;
+                let path = self.env.plugin_path(&repo.name)?;
+                if !path.is_dir() {
+                    return Err("Installed checkout is missing".into());
+                }
+                self.env.repo_clean(&path)?;
+                let quarantine = self.env.env_quarantine(&repo.name, &operation_id)?;
+                fs::rename(&path, &quarantine).map_err(|e| e.to_string())?;
+                files.push(quarantine.display().to_string());
+            }
+            "remove" => {
+                let original =
+                    PathBuf::from(history.files.first().ok_or("Removed plugin path missing")?);
+                let quarantine = PathBuf::from(
+                    history
+                        .files
+                        .get(1)
+                        .ok_or("Plugin quarantine path missing")?,
+                );
+                if fs::symlink_metadata(&original).is_ok() {
+                    return Err("Plugin destination is no longer empty".into());
+                }
+                fs::rename(&quarantine, &original).map_err(|e| e.to_string())?;
+                if let Some(backup_path) = history.backup.as_deref() {
+                    let restored = fs::read_to_string(backup_path).map_err(|e| e.to_string())?;
+                    let current = self.env.source()?;
+                    match self.env.write_config(&current, &restored) {
+                        Ok(b) => backup = Some(b),
+                        Err(e) => {
+                            let _ = fs::rename(&original, &quarantine);
+                            return Err(e);
+                        }
+                    }
+                }
+            }
+            _ => {
+                return Err(
+                    "Only configuration, install, and remove operations support automatic restore"
+                        .into(),
+                )
+            }
+        }
+        self.journal[index].undo_available = false;
+        self.record(
+            &operation_id,
+            "undo",
+            "restored",
+            files,
+            backup.clone(),
+            history.repo.clone(),
+            history.commit.clone(),
+            false,
+            None,
+        )?;
+        Ok(Applied {
+            id: operation_id,
+            status: "restored".into(),
+            backup: backup.map(|p| p.display().to_string()),
+            commit: history.commit,
+            undo_available: false,
+        })
     }
     pub fn request(&mut self, r: Request) -> Result<Response, String> {
         match r {
@@ -696,9 +785,17 @@ impl Manager {
                 updates: Some(self.updates()?),
                 message: None,
             }),
-            Request::Undo { history_id: _ } => Err(
-                "Undo is recorded but this restore action is not yet enabled in this MVP".into(),
-            ),
+            Request::Undo { history_id } => Ok(Response {
+                snapshot: None,
+                preview: None,
+                applied: Some(self.undo(&history_id)?),
+                inventory: None,
+                search: None,
+                capability: None,
+                history: None,
+                updates: None,
+                message: None,
+            }),
         }
     }
 }
@@ -733,5 +830,39 @@ mod tests {
         let decoded: History = serde_json::from_str(legacy).unwrap();
         assert!(decoded.repo.is_none());
         assert!(decoded.commit.is_none());
+    }
+
+    #[test]
+    fn undo_restores_configuration_from_backup_and_consumes_history_entry() {
+        let dir = tempfile::tempdir().unwrap();
+        let home = dir.path().to_path_buf();
+        let config_path = home.join(".zshrc");
+        let original = "ZSH_THEME=\"old\"\nplugins=(git)\n";
+        let changed = "ZSH_THEME=\"new\"\nplugins=(git brew)\n";
+        fs::write(&config_path, original).unwrap();
+        let env = Environment::at(home).unwrap();
+        let backup = env.write_config(original, changed).unwrap();
+        let mut manager = Manager {
+            env,
+            plans: HashMap::new(),
+            journal: vec![History {
+                id: "apply-1".into(),
+                at: 1,
+                operation: "configuration".into(),
+                status: "applied".into(),
+                files: vec![config_path.display().to_string()],
+                backup: Some(backup.display().to_string()),
+                undo_available: true,
+                repo: None,
+                commit: None,
+                error: None,
+            }],
+            journal_path: dir.path().join("history.json"),
+        };
+        let applied = manager.undo("apply-1").unwrap();
+        assert_eq!(applied.status, "restored");
+        assert_eq!(fs::read_to_string(config_path).unwrap(), original);
+        assert!(!manager.journal[0].undo_available);
+        assert_eq!(manager.journal[1].operation, "undo");
     }
 }

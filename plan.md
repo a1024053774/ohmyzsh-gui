@@ -19,7 +19,7 @@ Preserve unknown text, comments, permissions, symlinks and stale-edit detection.
 
 ## Acceptance
 
-- No mutation before explicit preview confirmation; cancel changes nothing; stale preview rejected. Applied operations record backup/quarantine paths; automatic Undo remains disabled until restore behavior is verified.
+- No mutation before explicit preview confirmation; cancel changes nothing; stale preview rejected. Configuration, install, and remove can be restored from their journaled backup/quarantine; update Undo remains disabled until the previous SHA is persisted and tested.
 - Syntax error/missing zsh leaves original bytes unchanged; symlink remains a symlink; backups and history restore work.
 - Unknown or unaudited shell forms are preserved, not interpreted.
 - Install uses actual selected GitHub repository and commit, enable is a separate `.zshrc` change, update shows old/new SHA and commit summary, remove is reversible and disables first.
@@ -44,6 +44,6 @@ Cross-platform runtime is only available on this Mac. Windows WSL and Linux adap
 - The Updates screen now performs an explicit GitHub check for app-managed plugins and presents a Homebrew-style list with old SHA, new SHA, and commit summary before routing to the existing Review/Apply flow. A local installation without app journal metadata is intentionally shown as local-only and is not guessed as a GitHub source.
 - The exact native app completed a live anonymous GitHub search and a read-only install preview for `syi0808/shellsuggest`, locking commit `6d083fbe` and showing separate Apply/Cancel controls. No install or `.zshrc` mutation was performed; evidence is in `docs/testing/live-github-preview-20260914.txt`.
 - Settings now queries only token presence/status from the OS credential store, never the token value; the native dialog visibly reports anonymous access when no token is configured and explains that saving an empty value removes it.
-- History semantics are now honest: install/update/remove/configuration records preserve backup/quarantine metadata but advertise Undo as unavailable until a tested restore path is implemented.
+- History semantics are now honest: configuration/install/remove records expose tested Undo; update records preserve metadata but advertise Undo as unavailable until the previous SHA is persisted and restore is tested.
 - Added a dedicated Installed screen following the Homebrew reference, with official and custom plugins, enabled badges, and the same detail/review actions as Discover.
 - Native plugin install/update/remove, live GitHub search, token save/readback, Windows WSL, Linux runtime, and CI execution remain NOT_RUN because they require external or other-platform side effects/runners.

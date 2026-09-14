@@ -79,6 +79,14 @@ pub struct PluginView {
     pub summary: String,
 }
 #[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct UpdateView {
+    pub name: String,
+    pub repo: Repo,
+    pub current_sha: String,
+    pub available_sha: String,
+    pub summary: String,
+}
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Inventory {
     pub plugins: Vec<PluginView>,
     pub capabilities: Capability,
@@ -115,6 +123,7 @@ pub enum Request {
         history_id: String,
     },
     History,
+    Updates,
 }
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Response {
@@ -125,6 +134,7 @@ pub struct Response {
     pub search: Option<github::Search>,
     pub capability: Option<Capability>,
     pub history: Option<Vec<History>>,
+    pub updates: Option<Vec<UpdateView>>,
     pub message: Option<String>,
 }
 struct Plan {
@@ -214,6 +224,31 @@ impl Manager {
             warnings: vec![],
         })
     }
+    fn updates(&mut self) -> Result<Vec<UpdateView>, String> {
+        let snapshot = self.snap()?;
+        let client = self.github()?;
+        let mut updates = Vec::new();
+        for plugin in snapshot.installed_custom_info {
+            let (Some(repo), Some(current_sha)) = (plugin.repo, plugin.current_sha) else {
+                continue;
+            };
+            let available_sha = client.head(&repo)?;
+            if available_sha == current_sha {
+                continue;
+            }
+            let summary = client
+                .compare(&repo, &current_sha, &available_sha)
+                .unwrap_or_else(|_| "Commit summary unavailable".into());
+            updates.push(UpdateView {
+                name: plugin.name,
+                repo,
+                current_sha,
+                available_sha,
+                summary,
+            });
+        }
+        Ok(updates)
+    }
     fn github(&self) -> Result<GitHub, String> {
         GitHub::new(github::token().ok().flatten().is_none())
     }
@@ -249,6 +284,7 @@ impl Manager {
             search: None,
             capability: None,
             history: None,
+            updates: None,
             message: None,
         }
     }
@@ -381,6 +417,7 @@ impl Manager {
                 search: None,
                 capability: None,
                 history: None,
+                updates: None,
                 message: None,
             }),
             Err(e) => {
@@ -556,6 +593,7 @@ impl Manager {
                 search: None,
                 capability: None,
                 history: None,
+                updates: None,
                 message: None,
             }),
             Request::Capability => Ok(Response {
@@ -566,6 +604,7 @@ impl Manager {
                 search: None,
                 capability: Some(self.cap()?),
                 history: None,
+                updates: None,
                 message: None,
             }),
             Request::PreviewConfig {
@@ -584,6 +623,7 @@ impl Manager {
                     search: None,
                     capability: None,
                     history: None,
+                    updates: None,
                     message: Some("Cancelled".into()),
                 })
             }
@@ -595,6 +635,7 @@ impl Manager {
                 search: Some(self.github()?.search(&query)?),
                 capability: None,
                 history: None,
+                updates: None,
                 message: None,
             }),
             Request::SetToken { token } => {
@@ -607,6 +648,7 @@ impl Manager {
                     search: None,
                     capability: None,
                     history: None,
+                    updates: None,
                     message: Some("Token saved in OS credential store".into()),
                 })
             }
@@ -624,6 +666,18 @@ impl Manager {
                 search: None,
                 capability: None,
                 history: Some(self.journal.clone()),
+                updates: None,
+                message: None,
+            }),
+            Request::Updates => Ok(Response {
+                snapshot: None,
+                preview: None,
+                applied: None,
+                inventory: None,
+                search: None,
+                capability: None,
+                history: None,
+                updates: Some(self.updates()?),
                 message: None,
             }),
             Request::Undo { history_id: _ } => Err(

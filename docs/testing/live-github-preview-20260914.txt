@@ -1,0 +1,13 @@
+Live native-app read-only verification (2026-09-14)
+
+Surface: exact Tauri macOS debug app at tauri://localhost
+Query: zsh autosuggestions
+
+Observed:
+- GitHub search returned syi0808/shellsuggest and VandlJ/WarpSetup.
+- Selected syi0808/shellsuggest; detail showed GitHub source, repository, Apache-2.0 license, and a remote update timestamp.
+- Review install fetched the remote head without applying anything.
+- Preview showed: `No .zshrc change` and `Install syi0808/shellsuggest at commit 6d083fbe. Git hooks and submodules are disabled.`
+- UI exposed separate `Apply…` and `Cancel` actions.
+- No Apply action was invoked; no plugin directory or `.zshrc` mutation was made.
+- GitHub status showed anonymous remaining quota 9 at the time of the read.

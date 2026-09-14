@@ -76,11 +76,13 @@ function confirmApply(title,message,fn){const d=$('confirm-dialog');$('confirm-t
 $('global-search').oninput=e=>{state.search=e.target.value;render()};
 $('global-search').onkeydown=e=>{if(e.key==='Enter'&&state.section==='discover')searchGitHub()};
 $('refresh-button').onclick=read;
-$('settings-button').onclick=async()=>{
+function refreshTokenStatus(){if(!native)return;call({kind:'token_status'}).then(r=>{$('token-status').textContent=r.message==='configured'?t('settings.tokenConfigured'):r.message==='not_configured'?t('settings.tokenNone'):t('settings.tokenUnavailable')}).catch(x=>{$('token-status').textContent=x.message})}
+$('settings-button').onclick=()=>{
   translateStatic();
   $('language-select').value=state.language;$('appearance-select').value=state.appearance;$('glass-toggle').checked=state.glass;
   $('settings-dialog').showModal();
   $('token-status').textContent=t('settings.tokenPrivate');
+  window.setTimeout(refreshTokenStatus,0);
 };
 $('language-select').onchange=e=>{state.language=e.target.value;savePreference('language',state.language);render()};
 $('appearance-select').onchange=e=>{state.appearance=e.target.value;savePreference('appearance',state.appearance);applyPreferences();render()};

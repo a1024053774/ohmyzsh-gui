@@ -13,14 +13,14 @@
     <aside class="sidebar" aria-label="Primary navigation">
       <div class="brand"><picture class="brand-logo"><source media="(prefers-color-scheme: light)" srcset="logo_light.png" /><img src="logo.png" alt="" /></picture><span>ohmyzsh-gui</span></div>
       <nav class="nav-list">
-        <button class="nav-item active" data-section="overview"><span>▦</span>Overview</button>
-        <button class="nav-item" data-section="installed"><span>▣</span>Installed</button>
-        <button class="nav-item" data-section="configuration"><span>☷</span>Configuration</button>
-        <button class="nav-item" data-section="discover"><span>⌕</span>Discover</button>
-        <button class="nav-item" data-section="updates"><span>↻</span>Updates <b class="count" id="updates-count">0</b></button>
-        <button class="nav-item" data-section="activity"><span>◷</span>Activity</button>
+        <button class="nav-item active" data-section="overview"><span>▦</span><span data-i18n="nav.overview">Overview</span></button>
+        <button class="nav-item" data-section="installed"><span>▣</span><span data-i18n="nav.installed">Installed</span></button>
+        <button class="nav-item" data-section="configuration"><span>☷</span><span data-i18n="nav.configuration">Configuration</span></button>
+        <button class="nav-item" data-section="discover"><span>⌕</span><span data-i18n="nav.discover">Discover</span></button>
+        <button class="nav-item" data-section="updates"><span>↻</span><span data-i18n="nav.updates">Updates</span> <b class="count" id="updates-count">0</b></button>
+        <button class="nav-item" data-section="activity"><span>◷</span><span data-i18n="nav.activity">Activity</span></button>
       </nav>
-      <div class="sidebar-footer"><button class="plain-button" id="settings-button">⚙ Settings</button><span class="version">MVP 0.1</span></div>
+      <div class="sidebar-footer"><button class="plain-button" id="settings-button">⚙ <span data-i18n="nav.settings">Settings</span></button><span class="version">MVP 0.1</span></div>
     </aside>
 
     <section class="workspace">
@@ -32,8 +32,8 @@
       <footer class="statusbar"><span class="status-dot" id="status-dot"></span><span id="status-text">Ready</span><span class="spacer"></span><span class="muted">Changes are previewed before Apply</span></footer>
     </section>
   </main>
-  <dialog id="confirm-dialog" class="modal"><form method="dialog"><h2 id="confirm-title">Apply change?</h2><p id="confirm-message"></p><div class="modal-actions"><button value="cancel" class="secondary">Cancel</button><button value="confirm" class="primary">Apply</button></div></form></dialog>
-  <dialog id="settings-dialog" class="modal"><form method="dialog" id="settings-form"><h2>Settings</h2><label class="field-label" for="github-token">GitHub token <span class="muted">optional</span></label><input id="github-token" type="password" autocomplete="off" placeholder="ghp_…" /><p id="token-status" class="hint">Token status is private to this app.</p><p class="hint">Without a token, GitHub search still works with public rate limits. The token stays local to this app. Save an empty value to remove it.</p><div class="modal-actions"><button value="cancel" class="secondary">Cancel</button><button value="save" class="primary">Save</button></div></form></dialog>
+  <dialog id="confirm-dialog" class="modal"><form method="dialog"><h2 id="confirm-title" data-i18n="confirm.title">Apply change?</h2><p id="confirm-message"></p><div class="modal-actions"><button value="cancel" class="secondary" data-i18n="common.cancel">Cancel</button><button value="confirm" class="primary" data-i18n="common.apply">Apply</button></div></form></dialog>
+  <dialog id="settings-dialog" class="modal"><form method="dialog" id="settings-form"><h2 data-i18n="settings.title">Settings</h2><label class="field-label" for="language-select" data-i18n="settings.language">Language</label><select id="language-select" class="select-input"><option value="auto" data-i18n="common.auto">Auto (System)</option><option value="en" data-i18n="common.english">English</option><option value="zh" data-i18n="common.chinese">简体中文</option></select><label class="field-label" for="appearance-select" data-i18n="settings.appearance">Appearance</label><select id="appearance-select" class="select-input"><option value="system" data-i18n="common.auto">Auto (System)</option><option value="light" data-i18n="common.light">Light</option><option value="dark" data-i18n="common.dark">Dark</option></select><label class="glass-option"><input id="glass-toggle" type="checkbox" /><span data-i18n="settings.liquidGlass">Liquid Glass materials</span></label><p class="hint" data-i18n="settings.glassHint">Uses translucent materials where supported and falls back to solid surfaces when unavailable.</p><label class="field-label" for="github-token"><span data-i18n="settings.githubToken">GitHub token</span> <span class="muted" data-i18n="settings.optional">optional</span></label><input id="github-token" type="password" autocomplete="off" placeholder="ghp_…" /><p id="token-status" class="hint" data-i18n="settings.tokenPrivate">Token status is private to this app.</p><p class="hint" data-i18n="settings.tokenHint">Without a token, GitHub search still works with public rate limits. The token stays local to this app. Save an empty value to remove it.</p><div class="modal-actions"><button value="cancel" class="secondary" data-i18n="common.cancel">Cancel</button><button value="save" class="primary" data-i18n="common.save">Save</button></div></form></dialog>
   <script src="app.js" type="module"></script>
 </body>
 </html>

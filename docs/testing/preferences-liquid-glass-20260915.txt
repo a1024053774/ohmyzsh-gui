@@ -1,0 +1,24 @@
+# Preferences, appearance, and Liquid Glass verification — 2026-09-15
+
+## Scope
+
+- Added English / Simplified Chinese / system language selection.
+- Added system / light / dark appearance selection; system is the default.
+- Added an opt-out Liquid Glass material preference with CSS blur/translucency and a reduced-transparency fallback.
+- Kept GitHub token handling local to the existing Settings flow.
+
+## Verification
+
+- `npm run check`: PASS
+- `cargo fmt --manifest-path src-tauri/Cargo.toml -- --check`: PASS
+- `cargo test --manifest-path src-tauri/Cargo.toml`: PASS — 11 passed, 1 ignored live GitHub smoke test
+- `cargo tauri build --debug --bundles app`: PASS — debug macOS app bundle created
+- Native debug UI: PASS — Settings displayed the three language choices, three appearance choices, and Liquid Glass checkbox.
+- Native interaction: PASS — switched to English, switched to Light, returned to Auto (System), returned to Auto (System) language, and closed Settings. The light-mode screenshot showed the translucent material; the system default returned to the dark system appearance.
+
+## Apple guidance applied
+
+- System appearance remains the default, with explicit overrides available for people who need them.
+- Liquid Glass is limited to window surfaces, cards, controls, and the Settings modal rather than applied indiscriminately.
+- `prefers-reduced-transparency` disables blur and returns to solid surfaces.
+- `prefers-reduced-motion` disables transitions and animations.

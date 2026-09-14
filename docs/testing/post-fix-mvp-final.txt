@@ -1,19 +1,42 @@
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.24s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
      Running unittests src/main.rs (src-tauri/target/debug/deps/ohmyzsh_gui-9646dfb9d0552243)
 
-running 11 tests
+running 12 tests
+test engine::tests::live_plugin_lifecycle_smoke_uses_temporary_home ... ignored, live GitHub smoke test; uses only a temporary HOME
 test config::tests::parent_directory_is_never_a_repository_name ... ok
 test engine::tests::history_preserves_repository_and_commit_metadata ... ok
 test config::tests::comments_are_not_enabled_plugins ... ok
-test config::tests::noop_and_comments_roundtrip ... ok
-test engine::tests::undo_install_refuses_enabled_plugin ... ok
-test config::tests::injected_value_rejected ... ok
 test config::tests::changing_theme_preserves_other_variables ... ok
+test config::tests::injected_value_rejected ... ok
+test config::tests::noop_and_comments_roundtrip ... ok
 test system::tests::invalid_config_never_replaces_original ... ok
+test engine::tests::undo_install_refuses_enabled_plugin ... ok
 test config::tests::dynamic_and_duplicate_fail ... ok
 test system::tests::applies_valid_config_in_isolated_home ... ok
 test engine::tests::undo_restores_configuration_from_backup_and_consumes_history_entry ... ok
 
-test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+test result: ok. 11 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.02s
 
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.14s
+    Checking objc2-exception-helper v0.1.1
+    Checking ring v0.17.14
+    Checking objc2 v0.6.4
+    Checking block2 v0.6.2
+    Checking objc2-core-foundation v0.3.2
+    Checking rustls-webpki v0.103.15
+    Checking dispatch2 v0.3.1
+    Checking rustls v0.23.44
+    Checking objc2-foundation v0.3.2
+    Checking tokio-rustls v0.26.5
+    Checking hyper-rustls v0.27.9
+    Checking reqwest v0.12.28
+    Checking objc2-app-kit v0.3.2
+    Checking objc2-web-kit v0.3.2
+    Checking tao v0.35.3
+    Checking muda v0.19.3
+    Checking window-vibrancy v0.6.0
+    Checking wry v0.55.1
+    Checking tauri-runtime v2.11.3
+    Checking tauri-runtime-wry v2.11.4
+    Checking tauri v2.11.5
+    Checking ohmyzsh-gui v0.1.0 (/Users/luckye/Documents/ohmyzsh-gui/src-tauri)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.03s

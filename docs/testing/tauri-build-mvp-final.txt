@@ -2,8 +2,8 @@
    Compiling objc2-exception-helper v0.1.1
    Compiling ring v0.17.14
    Compiling objc2 v0.6.4
-   Compiling block2 v0.6.2
    Compiling objc2-core-foundation v0.3.2
+   Compiling block2 v0.6.2
    Compiling dispatch2 v0.3.1
    Compiling objc2-foundation v0.3.2
    Compiling rustls v0.23.44
@@ -16,12 +16,12 @@
    Compiling tao v0.35.3
    Compiling window-vibrancy v0.6.0
    Compiling muda v0.19.3
-   Compiling wry v0.55.1
    Compiling tauri-runtime v2.11.3
+   Compiling wry v0.55.1
    Compiling tauri-runtime-wry v2.11.4
    Compiling tauri v2.11.5
    Compiling ohmyzsh-gui v0.1.0 (/Users/luckye/Documents/ohmyzsh-gui/src-tauri)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.38s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.79s
        Built application at: /Users/luckye/Documents/ohmyzsh-gui/src-tauri/target/debug/ohmyzsh-gui
     Bundling ohmyzsh-gui.app (/Users/luckye/Documents/ohmyzsh-gui/src-tauri/target/debug/bundle/macos/ohmyzsh-gui.app)
     Finished 1 bundle at:

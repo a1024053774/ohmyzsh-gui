@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running unittests src/main.rs (src-tauri/target/debug/deps/ohmyzsh_gui-9646dfb9d0552243)
+
+running 1 test
+test engine::tests::live_plugin_lifecycle_smoke_uses_temporary_home ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 6.34s
+

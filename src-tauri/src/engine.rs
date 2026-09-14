@@ -954,4 +954,88 @@ mod tests {
         assert!(error.contains("Disable this plugin"));
         assert!(plugin.exists());
     }
+
+    #[test]
+    #[ignore = "live GitHub smoke test; uses only a temporary HOME"]
+    fn live_plugin_lifecycle_smoke_uses_temporary_home() {
+        let dir = tempfile::tempdir().unwrap();
+        let home = dir.path().to_path_buf();
+        fs::write(
+            home.join(".zshrc"),
+            "ZSH_THEME=\"robbyrussell\"\nplugins=(git)\n",
+        )
+        .unwrap();
+        let env = Environment::at(home.clone()).unwrap();
+        let mut manager = Manager {
+            env,
+            plans: HashMap::new(),
+            journal: vec![],
+            journal_path: dir.path().join("history.json"),
+        };
+        let repo = Repo::parse("syi0808/shellsuggest").unwrap();
+        let head = manager.github().unwrap().head(&repo).unwrap();
+        let install_plan = Plan {
+            operation: "install".into(),
+            expected_source: None,
+            proposed_source: None,
+            repo: Some(repo.clone()),
+            target: Some(head.clone()),
+        };
+        let installed = manager
+            .apply_install("live-install", &install_plan)
+            .unwrap();
+        assert_eq!(installed.commit.as_deref(), Some(head.as_str()));
+        let path = manager.env.plugin_path(&repo.name).unwrap();
+        let commits = manager
+            .env
+            .git(Some(&path), &["rev-list", "--max-count=2", "HEAD"])
+            .unwrap();
+        let mut commits = commits.lines();
+        let current = commits.next().unwrap().to_string();
+        let previous = commits
+            .next()
+            .expect("repository needs two commits")
+            .to_string();
+        manager
+            .env
+            .git(Some(&path), &["checkout", "--detach", &previous])
+            .unwrap();
+        let update_plan = Plan {
+            operation: "update".into(),
+            expected_source: None,
+            proposed_source: None,
+            repo: Some(repo.clone()),
+            target: Some(current.clone()),
+        };
+        let updated = manager.apply_update("live-update", &update_plan).unwrap();
+        assert_eq!(updated.commit.as_deref(), Some(current.as_str()));
+        let update_history = manager
+            .journal
+            .iter()
+            .find(|h| h.id == "live-update")
+            .unwrap();
+        assert_eq!(
+            update_history.previous_commit.as_deref(),
+            Some(previous.as_str())
+        );
+        manager.undo("live-update").unwrap();
+        assert_eq!(manager.env.repo_clean(&path).unwrap(), previous);
+
+        fs::write(
+            &manager.env.config,
+            "ZSH_THEME=\"robbyrussell\"\nplugins=(git shellsuggest)\n",
+        )
+        .unwrap();
+        let preview = manager
+            .plugin_preview("remove".into(), repo.owner.clone(), repo.name.clone(), None)
+            .unwrap()
+            .preview
+            .unwrap();
+        let remove_id = preview.id.clone();
+        manager.apply(&remove_id).unwrap();
+        assert!(!path.exists());
+        manager.undo(&remove_id).unwrap();
+        assert!(path.exists());
+        assert!(manager.env.source().unwrap().contains("shellsuggest"));
+    }
 }

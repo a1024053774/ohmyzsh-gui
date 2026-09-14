@@ -46,6 +46,7 @@ Cross-platform runtime is only available on this Mac. Windows WSL and Linux adap
 - An ignored live smoke test now exercises install at a real GitHub SHA, update from an older checkout, update Undo to the previous SHA, remove with `.zshrc` disabling, and remove Undo, all inside a temporary HOME. It passed once and is recorded in `docs/testing/live-plugin-lifecycle-20260914.txt`.
 - The cross-platform CI matrix now runs `cargo check` in addition to format and offline tests on macOS, Ubuntu, and Windows; local execution of those hosted runners remains pending.
 - An optimized release `.app` bundle now builds locally; debug and release bundle outputs are recorded separately under `docs/testing/`.
+- Local Linux/Windows target probes reached native dependency compilation but were blocked by missing cross compilers/sysroots; evidence is in `docs/testing/cross-target-check-20260914.txt`. Hosted CI remains the authoritative cross-platform check.
 - Settings now queries only token presence/status from the OS credential store, never the token value; the native dialog visibly reports anonymous access when no token is configured and explains that saving an empty value removes it.
 - History semantics are now honest: configuration/install/remove records expose tested Undo; update records persist both current and previous SHA and expose Undo, with live rollback still requiring acceptance evidence.
 - Added a dedicated Installed screen following the Homebrew reference, with official and custom plugins, enabled badges, and the same detail/review actions as Discover.

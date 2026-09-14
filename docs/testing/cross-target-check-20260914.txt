@@ -1,0 +1,20 @@
+Cross-target compile probe (2026-09-14)
+
+Targets installed locally:
+- x86_64-unknown-linux-gnu
+- x86_64-pc-windows-gnu
+
+Commands:
+- cargo check --manifest-path src-tauri/Cargo.toml --target x86_64-unknown-linux-gnu
+- cargo check --manifest-path src-tauri/Cargo.toml --target x86_64-pc-windows-gnu
+
+Result: NOT_RUN_TO_COMPLETION / environment blocked.
+
+Linux probe reached native dependency build, then stopped because the host lacks
+x86_64-linux-gnu-gcc and a configured cross pkg-config/sysroot for libdbus.
+Windows probe reached native dependency build, then stopped because the host
+lacks x86_64-w64-mingw32-gcc. The failure is toolchain/sysroot availability;
+no source compile error was observed before those native build requirements.
+The authoritative cross-platform check remains the GitHub Actions matrix in
+.github/workflows/ci.yml, which has not run because this repository has no
+configured remote/runner in the current workspace.

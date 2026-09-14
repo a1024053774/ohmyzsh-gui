@@ -92,7 +92,6 @@ impl Document {
                 None
             }
         };
-        if let Some(m) = pattern("ZSH_THEME").find(&source) {}
         let re = pattern("plugins");
         let matches: Vec<_> = re.captures_iter(&source).collect();
         let mut tokens = vec![];

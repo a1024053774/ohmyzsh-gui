@@ -166,9 +166,7 @@ impl GitHub {
             updated: v["updated_at"].as_str().unwrap_or("").into(),
         })
     }
-    pub fn info(&self, repo: &Repo) -> Result<Candidate, String> {
-        Self::candidate(&self.get(&format!("/repos/{}", repo.slug()), &[])?.0)
-    }
+
     pub fn head(&self, repo: &Repo) -> Result<String, String> {
         let v = self
             .get(&format!("/repos/{}/commits/HEAD", repo.slug()), &[])?
@@ -207,16 +205,5 @@ impl GitHub {
             })
             .collect::<Vec<_>>()
             .join("\n"))
-    }
-    pub fn official(&self) -> Result<Vec<String>, String> {
-        let v = self.get("/repos/ohmyzsh/ohmyzsh/contents/plugins", &[])?.0;
-        Ok(v.as_array()
-            .ok_or("Invalid official index")?
-            .iter()
-            .filter(|x| x["type"] == "dir")
-            .filter_map(|x| x["name"].as_str())
-            .filter(|n| config::component(n))
-            .map(String::from)
-            .collect())
     }
 }

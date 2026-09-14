@@ -122,8 +122,6 @@ struct Plan {
     proposed_source: Option<String>,
     repo: Option<Repo>,
     target: Option<String>,
-    backup: Option<PathBuf>,
-    name: Option<String>,
 }
 pub struct Manager {
     pub env: Environment,
@@ -235,8 +233,6 @@ impl Manager {
             proposed_source: Some(proposed.clone()),
             repo: None,
             target: None,
-            backup: None,
-            name: None,
         };
         Ok(self.plan(
             p,
@@ -316,8 +312,6 @@ impl Manager {
             proposed_source: proposed,
             repo: Some(repo.clone()),
             target: Some(target.clone()),
-            backup: None,
-            name: Some(repo.name.clone()),
         };
         Ok(self.plan(
             p,

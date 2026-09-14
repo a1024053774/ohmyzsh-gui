@@ -1,0 +1,36 @@
+    Checking ohmyzsh-gui v0.1.0 (/Users/luckye/Documents/ohmyzsh-gui/src-tauri)
+warning: unused variable: `m`
+  --> src/config.rs:95:21
+   |
+95 |         if let Some(m) = pattern("ZSH_THEME").find(&source) {}
+   |                     ^ help: if this is intentional, prefix it with an underscore: `_m`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: fields `backup` and `name` are never read
+   --> src/engine.rs:125:5
+    |
+119 | struct Plan {
+    |        ---- fields in this struct
+...
+125 |     backup: Option<PathBuf>,
+    |     ^^^^^^
+126 |     name: Option<String>,
+    |     ^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: methods `info` and `official` are never used
+   --> src/github.rs:169:12
+    |
+ 88 | impl GitHub {
+    | ----------- methods in this implementation
+...
+169 |     pub fn info(&self, repo: &Repo) -> Result<Candidate, String> {
+    |            ^^^^
+...
+211 |     pub fn official(&self) -> Result<Vec<String>, String> {
+    |            ^^^^^^^^
+
+warning: `ohmyzsh-gui` (bin "ohmyzsh-gui") generated 3 warnings (run `cargo fix --bin "ohmyzsh-gui" -p ohmyzsh-gui` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.66s

@@ -1,0 +1,16 @@
+   Compiling ohmyzsh-gui v0.1.0 (/Users/luckye/Documents/ohmyzsh-gui/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.76s
+     Running unittests src/main.rs (src-tauri/target/debug/deps/ohmyzsh_gui-9646dfb9d0552243)
+
+running 8 tests
+test config::tests::parent_directory_is_never_a_repository_name ... ok
+test config::tests::comments_are_not_enabled_plugins ... ok
+test config::tests::changing_theme_preserves_other_variables ... ok
+test config::tests::noop_and_comments_roundtrip ... ok
+test config::tests::injected_value_rejected ... ok
+test system::tests::invalid_config_never_replaces_original ... ok
+test config::tests::dynamic_and_duplicate_fail ... ok
+test system::tests::applies_valid_config_in_isolated_home ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

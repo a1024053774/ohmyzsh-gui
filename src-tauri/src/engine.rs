@@ -16,6 +16,13 @@ pub struct Snapshot {
     pub platform: String,
     pub plugin_root: String,
     pub installed_custom: Vec<String>,
+    pub installed_custom_info: Vec<InstalledPlugin>,
+}
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct InstalledPlugin {
+    pub name: String,
+    pub repo: Option<Repo>,
+    pub current_sha: Option<String>,
 }
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Preview {
@@ -46,6 +53,10 @@ pub struct History {
     pub files: Vec<String>,
     pub backup: Option<String>,
     pub undo_available: bool,
+    #[serde(default)]
+    pub repo: Option<Repo>,
+    #[serde(default)]
+    pub commit: Option<String>,
     pub error: Option<String>,
 }
 #[derive(Clone, Serialize, Deserialize, Debug)]
@@ -151,6 +162,36 @@ impl Manager {
         self.env.resolve_layout()?;
         let source = self.env.source()?;
         let d = Document::parse(source.clone());
+        let installed_custom = fs::read_dir(self.env.custom.join("plugins"))
+            .ok()
+            .into_iter()
+            .flatten()
+            .filter_map(|e| e.ok())
+            .filter(|e| e.file_type().map(|t| t.is_dir()).unwrap_or(false))
+            .filter_map(|e| e.file_name().to_str().map(String::from))
+            .filter(|n| config::component(n))
+            .collect::<Vec<_>>();
+        let installed_custom_info = installed_custom
+            .iter()
+            .map(|name| {
+                let path = self.env.plugin_path(name).ok();
+                let current_sha = path.as_deref().and_then(|p| self.env.repo_clean(p).ok());
+                let repo = path.as_deref().and_then(|p| {
+                    self.journal.iter().rev().find_map(|h| {
+                        h.files
+                            .iter()
+                            .any(|f| f == &p.display().to_string())
+                            .then(|| h.repo.clone())
+                            .flatten()
+                    })
+                });
+                InstalledPlugin {
+                    name: name.clone(),
+                    repo,
+                    current_sha,
+                }
+            })
+            .collect();
         Ok(Snapshot {
             path: self.env.config.display().to_string(),
             source,
@@ -159,15 +200,8 @@ impl Manager {
             zsh_available: self.env.tool_available("zsh"),
             platform: self.env.label.clone(),
             plugin_root: self.env.custom.join("plugins").display().to_string(),
-            installed_custom: fs::read_dir(self.env.custom.join("plugins"))
-                .ok()
-                .into_iter()
-                .flatten()
-                .filter_map(|e| e.ok())
-                .filter(|e| e.file_type().map(|t| t.is_dir()).unwrap_or(false))
-                .filter_map(|e| e.file_name().to_str().map(String::from))
-                .filter(|n| config::component(n))
-                .collect(),
+            installed_custom,
+            installed_custom_info,
         })
     }
     fn cap(&mut self) -> Result<Capability, String> {
@@ -365,6 +399,8 @@ impl Manager {
             "applied",
             vec![self.env.config.display().to_string()],
             Some(b.clone()),
+            None,
+            None,
             true,
             None,
         )?;
@@ -407,6 +443,8 @@ impl Manager {
             "applied",
             vec![path.display().to_string()],
             None,
+            Some(repo.clone()),
+            Some(got.clone()),
             true,
             None,
         )?;
@@ -437,6 +475,8 @@ impl Manager {
             "applied",
             vec![path.display().to_string()],
             None,
+            Some(repo.clone()),
+            Some(got.clone()),
             true,
             None,
         )?;
@@ -467,6 +507,8 @@ impl Manager {
             "applied",
             vec![path.display().to_string(), q.display().to_string()],
             Some(backup.clone()),
+            Some(repo.clone()),
+            Some(p.target.clone().unwrap_or_default()),
             true,
             None,
         )?;
@@ -485,6 +527,8 @@ impl Manager {
         status: &str,
         files: Vec<String>,
         backup: Option<PathBuf>,
+        repo: Option<Repo>,
+        commit: Option<String>,
         undo: bool,
         error: Option<String>,
     ) -> Result<(), String> {
@@ -496,6 +540,8 @@ impl Manager {
             files,
             backup: backup.map(|x| x.display().to_string()),
             undo_available: undo,
+            repo,
+            commit,
             error,
         });
         self.save_history()
@@ -584,5 +630,38 @@ impl Manager {
                 "Undo is recorded but this restore action is not yet enabled in this MVP".into(),
             ),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn history_preserves_repository_and_commit_metadata() {
+        let history = History {
+            id: "op-1".into(),
+            at: 1,
+            operation: "install".into(),
+            status: "applied".into(),
+            files: vec!["/tmp/plugin".into()],
+            backup: None,
+            undo_available: true,
+            repo: Some(Repo {
+                owner: "example".into(),
+                name: "plugin".into(),
+            }),
+            commit: Some("0123456789012345678901234567890123456789".into()),
+            error: None,
+        };
+        let encoded = serde_json::to_string(&history).unwrap();
+        let decoded: History = serde_json::from_str(&encoded).unwrap();
+        assert_eq!(decoded.repo, history.repo);
+        assert_eq!(decoded.commit, history.commit);
+
+        let legacy = r#"{"id":"old","at":1,"operation":"configuration","status":"applied","files":[],"backup":null,"undo_available":true,"error":null}"#;
+        let decoded: History = serde_json::from_str(legacy).unwrap();
+        assert!(decoded.repo.is_none());
+        assert!(decoded.commit.is_none());
     }
 }

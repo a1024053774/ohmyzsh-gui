@@ -1,0 +1,8 @@
+        Info Looking up installed tauri packages to check mismatched versions...
+   Compiling ohmyzsh-gui v0.1.0 (/Users/luckye/Documents/ohmyzsh-gui/src-tauri)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.64s
+       Built application at: /Users/luckye/Documents/ohmyzsh-gui/src-tauri/target/debug/ohmyzsh-gui
+    Bundling ohmyzsh-gui.app (/Users/luckye/Documents/ohmyzsh-gui/src-tauri/target/debug/bundle/macos/ohmyzsh-gui.app)
+    Finished 1 bundle at:
+        /Users/luckye/Documents/ohmyzsh-gui/src-tauri/target/debug/bundle/macos/ohmyzsh-gui.app
+

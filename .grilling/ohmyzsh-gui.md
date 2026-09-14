@@ -3,8 +3,8 @@ session_id: grilling-ohmyzsh-gui-20260914
 status: active
 topic: oh-my-zsh macOS GUI configuration and plugin manager
 created_at: 2026-09-14T15:50:00+08:00
-updated_at: 2026-09-14T20:20:00+08:00
-last_round: 9
+updated_at: 2026-09-14T20:45:00+08:00
+last_round: 10
 ---
 
 ## Goal
@@ -62,7 +62,7 @@ last_round: 9
 - F2 | state: resolved | source: round 4 | Owner chose combined catalogue, optional GitHub token, Homebrew-like update view, commit SHA tracking, and confirmation after preview.
 - F3 | state: resolved | source: round 4 | Owner changed platform to cross-platform and delegated technology choice; proceed with Tauri 2 + Rust + web UI.
 - F4 | state: resolved | source: round 5 | Cursor/Grok GUI research returned cited Tauri, zsh safety, plugin lifecycle, token, and Apple HIG guidance; record saved under `docs/research/`.
-- F5 | state: active | source: round 6-9 | Added conservative source-span parser, stale-preview transaction, isolated backup/syntax tests, OS credential store, GitHub client, inventory, and Tauri dispatch boundary. The macOS Tauri app now builds and has been visually inspected; other-platform runtime and side-effecting plugin lifecycle evidence remain open.
+- F5 | state: active | source: round 6-10 | Added conservative source-span parser, stale-preview transaction, isolated backup/syntax tests, OS credential store, GitHub client, inventory, and Tauri dispatch boundary. The macOS Tauri app builds and has been visually inspected; installed plugin SHA/repository metadata now survives into Discover and Activity. Other-platform runtime and side-effecting plugin lifecycle evidence remain open.
 
 ## Risks and conflicts
 
@@ -90,6 +90,7 @@ last_round: 9
 - Round 7: Added custom checkout inventory, CI matrix, and corrected activity/credential semantics; latest visual refresh remained incomplete due localhost browser policy.
 - Round 8: Re-ran final Rust/frontend checks; installed Tauri CLI and recorded the local environment limits.
 - Round 9: Built the debug `.app`, launched the exact artifact, read the real `.zshrc` without mutation, verified Configuration preview and Discover inventory, and recorded native visual evidence. DMG bundling failed in the platform bundler; `.app` bundling passed.
+- Round 10: Added persisted plugin repository/commit metadata and current checkout SHA display, added backward-compatible history serialization coverage, fixed a frontend title-map runtime regression found by launching the new bundle, rebuilt the `.app`, and verified native Discover details and single enable/disable action.
 
 ## Evidence updates
 
@@ -105,3 +106,4 @@ last_round: 9
 - E10 | state: observed | source: local build 2026-09-14 | `cargo tauri build --debug --bundles app` passed and produced `/Users/luckye/Documents/ohmyzsh-gui/src-tauri/target/debug/bundle/macos/ohmyzsh-gui.app`; detailed output is in `docs/testing/tauri-build-final.txt`.
 - E11 | state: observed | source: CUA native app inspection 2026-09-14 | The exact built app opened as `ohmyzsh-gui` at `tauri://localhost`, loaded the real `/Users/luckye/.zshrc`, showed `powerlevel10k/powerlevel10k` and the user's enabled plugins, produced a no-op Configuration preview, and displayed local custom plugin inventory in Discover. No Apply action was invoked.
 - E12 | state: incomplete | source: local commands and scope boundary 2026-09-14 | DMG packaging failed in `bundle_dmg.sh`; live GitHub search, token persistence, install/update/remove, Windows WSL, Linux runtime, and CI execution remain unrun.
+- E13 | state: observed | source: local tests and CUA native app inspection 2026-09-14 | Nine Rust tests pass, including legacy history JSON compatibility and repository/commit round-trip coverage. The exact rebuilt app displays the real `zsh-autosuggestions` checkout SHA `85919cd1…` and a single Disable plus Review uninstall action without changing `.zshrc`.

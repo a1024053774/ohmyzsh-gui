@@ -14,8 +14,8 @@ Install the Tauri CLI, then run `cargo tauri dev` from the repository root. For 
 
 ## Safety boundary
 
-The app never changes `.zshrc` without an explicit Apply action. It creates a backup, writes a temporary file, validates with `zsh -n`, and replaces the original only after validation succeeds. GitHub plugin sources are restricted to owner/repository components; install/update/uninstall require confirmation. GitHub Token is optional and stored through the platform credential store (Keychain on macOS, Credential Manager on Windows, Secret Service on Linux); anonymous search remains available when that store is unavailable. Plugin code is never executed by the manager.
+The app never changes `.zshrc` without an explicit Apply action. It creates a backup, writes a temporary file, validates with `zsh -n`, and replaces the original only after validation succeeds. GitHub plugin sources are restricted to owner/repository components; install/update/uninstall require confirmation. Installed checkouts record their repository and exact commit SHA, and the current SHA is shown when the checkout is rediscovered. GitHub Token is optional and stored through the platform credential store (Keychain on macOS, Credential Manager on Windows, Secret Service on Linux); anonymous search remains available when that store is unavailable. Plugin code is never executed by the manager.
 
 ## Validation
 
-`node --check src/app.js` and `cargo test --manifest-path src-tauri/Cargo.toml` validate the frontend syntax and Rust parsing/safety core. `cargo check --manifest-path src-tauri/Cargo.toml` validates the Tauri backend. Full GUI build/signing requires the platform SDKs and Tauri CLI.
+`node --check src/app.js` and `cargo test --manifest-path src-tauri/Cargo.toml` validate the frontend syntax and Rust parsing/safety core. `cargo check --manifest-path src-tauri/Cargo.toml` validates the Tauri backend. The current Rust suite has 9 tests; `cargo tauri build --debug --bundles app` produces the local macOS `.app` bundle. Full signing and DMG distribution require additional platform SDKs and signing setup.

@@ -57,6 +57,8 @@ pub struct History {
     pub repo: Option<Repo>,
     #[serde(default)]
     pub commit: Option<String>,
+    #[serde(default)]
+    pub previous_commit: Option<String>,
     pub error: Option<String>,
 }
 #[derive(Clone, Serialize, Deserialize, Debug)]
@@ -439,6 +441,7 @@ impl Manager {
             Some(b.clone()),
             None,
             None,
+            None,
             true,
             None,
         )?;
@@ -483,6 +486,7 @@ impl Manager {
             None,
             Some(repo.clone()),
             Some(got.clone()),
+            None,
             true,
             None,
         )?;
@@ -515,7 +519,8 @@ impl Manager {
             None,
             Some(repo.clone()),
             Some(got.clone()),
-            false,
+            Some(old.clone()),
+            true,
             None,
         )?;
         Ok(Applied {
@@ -547,6 +552,7 @@ impl Manager {
             Some(backup.clone()),
             Some(repo.clone()),
             Some(p.target.clone().unwrap_or_default()),
+            None,
             true,
             None,
         )?;
@@ -567,6 +573,7 @@ impl Manager {
         backup: Option<PathBuf>,
         repo: Option<Repo>,
         commit: Option<String>,
+        previous_commit: Option<String>,
         undo: bool,
         error: Option<String>,
     ) -> Result<(), String> {
@@ -580,6 +587,7 @@ impl Manager {
             undo_available: undo,
             repo,
             commit,
+            previous_commit,
             error,
         });
         self.save_history()
@@ -597,6 +605,8 @@ impl Manager {
         let operation_id = system::id();
         let mut files = history.files.clone();
         let mut backup = None;
+        let mut restored_commit = history.commit.clone();
+        let mut restored_previous_commit = history.previous_commit.clone();
         match history.operation.as_str() {
             "configuration" => {
                 let backup_path = history
@@ -646,12 +656,38 @@ impl Manager {
                     }
                 }
             }
-            _ => {
-                return Err(
-                    "Only configuration, install, and remove operations support automatic restore"
-                        .into(),
-                )
+            "update" => {
+                let repo = history
+                    .repo
+                    .as_ref()
+                    .ok_or("Plugin repository metadata missing")?;
+                let previous = history
+                    .previous_commit
+                    .as_deref()
+                    .ok_or("Previous commit metadata missing")?;
+                let target = history
+                    .commit
+                    .as_deref()
+                    .ok_or("Current commit metadata missing")?;
+                let path = self.env.plugin_path(&repo.name)?;
+                let current = self.env.repo_clean(&path)?;
+                if current != target {
+                    return Err(
+                        "Checkout changed since the update; refusing automatic restore".into(),
+                    );
+                }
+                self.env
+                    .git(Some(&path), &["fetch", "--no-tags", "origin", previous])?;
+                self.env
+                    .git(Some(&path), &["checkout", "--detach", previous])?;
+                let got = self.env.git(Some(&path), &["rev-parse", "HEAD"])?;
+                if got != previous {
+                    return Err("Restore did not reach the previous commit".into());
+                }
+                restored_commit = Some(got);
+                restored_previous_commit = Some(target.into());
             }
+            _ => return Err("This operation does not support automatic restore".into()),
         }
         self.journal[index].undo_available = false;
         self.record(
@@ -661,7 +697,8 @@ impl Manager {
             files,
             backup.clone(),
             history.repo.clone(),
-            history.commit.clone(),
+            restored_commit.clone(),
+            restored_previous_commit,
             false,
             None,
         )?;
@@ -669,7 +706,7 @@ impl Manager {
             id: operation_id,
             status: "restored".into(),
             backup: backup.map(|p| p.display().to_string()),
-            commit: history.commit,
+            commit: restored_commit,
             undo_available: false,
         })
     }
@@ -819,12 +856,14 @@ mod tests {
                 name: "plugin".into(),
             }),
             commit: Some("0123456789012345678901234567890123456789".into()),
+            previous_commit: Some("fedcba9876543210fedcba9876543210fedcba98".into()),
             error: None,
         };
         let encoded = serde_json::to_string(&history).unwrap();
         let decoded: History = serde_json::from_str(&encoded).unwrap();
         assert_eq!(decoded.repo, history.repo);
         assert_eq!(decoded.commit, history.commit);
+        assert_eq!(decoded.previous_commit, history.previous_commit);
 
         let legacy = r#"{"id":"old","at":1,"operation":"configuration","status":"applied","files":[],"backup":null,"undo_available":true,"error":null}"#;
         let decoded: History = serde_json::from_str(legacy).unwrap();
@@ -855,6 +894,7 @@ mod tests {
                 undo_available: true,
                 repo: None,
                 commit: None,
+                previous_commit: None,
                 error: None,
             }],
             journal_path: dir.path().join("history.json"),

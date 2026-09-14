@@ -3,8 +3,8 @@ session_id: grilling-ohmyzsh-gui-20260914
 status: active
 topic: oh-my-zsh macOS GUI configuration and plugin manager
 created_at: 2026-09-14T15:50:00+08:00
-updated_at: 2026-09-14T18:05:00+08:00
-last_round: 5
+updated_at: 2026-09-14T19:20:00+08:00
+last_round: 6
 ---
 
 ## Goal
@@ -62,6 +62,7 @@ last_round: 5
 - F2 | state: resolved | source: round 4 | Owner chose combined catalogue, optional GitHub token, Homebrew-like update view, commit SHA tracking, and confirmation after preview.
 - F3 | state: resolved | source: round 4 | Owner changed platform to cross-platform and delegated technology choice; proceed with Tauri 2 + Rust + web UI.
 - F4 | state: resolved | source: round 5 | Cursor/Grok GUI research returned cited Tauri, zsh safety, plugin lifecycle, token, and Apple HIG guidance; record saved under `docs/research/`.
+- F5 | state: active | source: round 6 | Added conservative source-span parser, stale-preview transaction, isolated backup/syntax tests, OS credential store, GitHub client, and Tauri dispatch boundary. Full desktop build and cross-platform runtime remain to verify.
 
 ## Risks and conflicts
 
@@ -70,7 +71,7 @@ last_round: 5
 - R3 | state: open | A marketplace catalogue needs a source of truth, metadata schema, freshness/update behavior, and handling of deleted or malicious repositories.
 - R4 | state: open | Cursor/Grok availability and search output are not yet independently verified; GUI research was started and is still pending completion evidence.
 - R5 | state: open | Cross-platform zsh availability and platform-specific home/config paths vary; runtime capability checks are required.
-- R6 | state: open | Token storage should use OS credential stores; current MVP config-file storage is a temporary implementation boundary pending keychain/credential-manager integration.
+- R6 | state: mitigated | source: round 6 | Token uses keyring crate with native backend per OS; unavailable stores fail closed while anonymous search remains available.
 
 ## Final baseline
 
@@ -84,6 +85,7 @@ last_round: 5
 - Round 3: Read Apple HIG pages; created draft `spec.md`; direct Cursor Agent/Grok research attempt produced no output and was stopped.
 - Round 4: Owner changed scope to cross-platform and accepted default technology selection; begin Tauri/Rust implementation while preserving Apple-inspired visual guidance.
 - Round 5: Cursor GUI research completed with cited guidance; created Tauri scaffold, Rust commands, Apple-inspired frontend, and initial tests.
+- Round 6: Replaced naive config/file operations with source-span parsing, stale-preview apply plans, isolated filesystem tests, GitHub/keyring backend, and explicit browser read-only mode.
 
 ## Evidence updates
 

@@ -1,0 +1,104 @@
+   Compiling ohmyzsh-gui v0.1.0 (/Users/luckye/Documents/ohmyzsh-gui/src-tauri)
+warning: function `digest` is never used
+ --> src/config.rs:6:8
+  |
+6 | pub fn digest(s: &str) -> String {
+  |        ^^^^^^
+  |
+  = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `prefixes` is never read
+  --> src/config.rs:41:9
+   |
+34 | pub struct Document {
+   |            -------- field in this struct
+...
+41 |     pub prefixes: Vec<usize>,
+   |         ^^^^^^^^
+   |
+   = note: `Document` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+
+warning: fields `backup` and `name` are never read
+   --> src/engine.rs:124:5
+    |
+118 | struct Plan {
+    |        ---- fields in this struct
+...
+124 |     backup: Option<PathBuf>,
+    |     ^^^^^^
+125 |     name: Option<String>,
+    |     ^^^^
+
+warning: methods `info` and `official` are never used
+   --> src/github.rs:169:12
+    |
+ 88 | impl GitHub {
+    | ----------- methods in this implementation
+...
+169 |     pub fn info(&self, repo: &Repo) -> Result<Candidate, String> {
+    |            ^^^^
+...
+211 |     pub fn official(&self) -> Result<Vec<String>, String> {
+    |            ^^^^^^^^
+
+warning: `ohmyzsh-gui` (bin "ohmyzsh-gui" test) generated 4 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.33s
+     Running unittests src/main.rs (src-tauri/target/debug/deps/ohmyzsh_gui-9646dfb9d0552243)
+
+running 8 tests
+test config::tests::parent_directory_is_never_a_repository_name ... ok
+test config::tests::injected_value_rejected ... ok
+test config::tests::noop_and_comments_roundtrip ... ok
+test config::tests::comments_are_not_enabled_plugins ... ok
+test config::tests::changing_theme_preserves_other_variables ... ok
+test system::tests::invalid_config_never_replaces_original ... ok
+test config::tests::dynamic_and_duplicate_fail ... ok
+test system::tests::applies_valid_config_in_isolated_home ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+    Checking ohmyzsh-gui v0.1.0 (/Users/luckye/Documents/ohmyzsh-gui/src-tauri)
+warning: function `digest` is never used
+ --> src/config.rs:6:8
+  |
+6 | pub fn digest(s: &str) -> String {
+  |        ^^^^^^
+  |
+  = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `prefixes` is never read
+  --> src/config.rs:41:9
+   |
+34 | pub struct Document {
+   |            -------- field in this struct
+...
+41 |     pub prefixes: Vec<usize>,
+   |         ^^^^^^^^
+   |
+   = note: `Document` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+
+warning: fields `backup` and `name` are never read
+   --> src/engine.rs:124:5
+    |
+118 | struct Plan {
+    |        ---- fields in this struct
+...
+124 |     backup: Option<PathBuf>,
+    |     ^^^^^^
+125 |     name: Option<String>,
+    |     ^^^^
+
+warning: methods `info` and `official` are never used
+   --> src/github.rs:169:12
+    |
+ 88 | impl GitHub {
+    | ----------- methods in this implementation
+...
+169 |     pub fn info(&self, repo: &Repo) -> Result<Candidate, String> {
+    |            ^^^^
+...
+211 |     pub fn official(&self) -> Result<Vec<String>, String> {
+    |            ^^^^^^^^
+
+warning: `ohmyzsh-gui` (bin "ohmyzsh-gui") generated 4 warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.76s

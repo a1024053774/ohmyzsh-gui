@@ -10,11 +10,11 @@ The layout follows the Apple Human Interface Guidelines for [sidebars](https://d
 
 ## Run
 
-Install the Tauri CLI, then run `cargo tauri dev` from the repository root. For a browser-only visual preview, run `npm run dev` and open `http://localhost:1420`; preview mode uses a safe in-memory `.zshrc` fixture.
+Install the Tauri CLI, then run `cargo tauri dev` from the repository root. For a browser-only visual preview, run `npm run dev` and open `http://localhost:1420`; preview mode uses a safe in-memory `.zshrc` fixture and explicitly refuses Apply, token storage, and GitHub requests.
 
 ## Safety boundary
 
-The app never changes `.zshrc` without an explicit Apply action. It creates a backup, writes a temporary file, validates with `zsh -n`, and replaces the original only after validation succeeds. GitHub plugin sources are restricted to owner/repository components; install/update/uninstall require confirmation. GitHub Token is optional and stored locally with restrictive permissions on Unix. Plugin code is never executed by the manager.
+The app never changes `.zshrc` without an explicit Apply action. It creates a backup, writes a temporary file, validates with `zsh -n`, and replaces the original only after validation succeeds. GitHub plugin sources are restricted to owner/repository components; install/update/uninstall require confirmation. GitHub Token is optional and stored through the platform credential store (Keychain on macOS, Credential Manager on Windows, Secret Service on Linux); anonymous search remains available when that store is unavailable. Plugin code is never executed by the manager.
 
 ## Validation
 

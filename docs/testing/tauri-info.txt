@@ -1,0 +1,28 @@
+
+[✘] Environment
+    - OS: Mac OS 27.0.0 arm64 (X64)
+    ✔ Xcode Command Line Tools: installed
+    ✘ Xcode: not installed!
+    ✔ rustc: 1.97.0 (2d8144b78 2026-07-07)
+    ✔ cargo: 1.97.0 (c980f4866 2026-06-30)
+    ✔ rustup: 1.29.0 (28d1352db 2026-03-05)
+    ✔ Rust toolchain: stable-aarch64-apple-darwin (overridden by environment variable RUSTUP_TOOLCHAIN)
+    - node: 26.5.0
+    - pnpm: 11.19.0
+    - npm: 12.0.1
+    - bun: 1.3.11
+
+[-] Packages
+    - tauri 🦀: 2.11.5
+    - tauri-build 🦀: 2.6.3
+    - wry 🦀: 0.55.1, (outdated, latest: 0.57.0)
+    - tao 🦀: 0.35.3, (outdated, latest: 0.37.0)
+    - tauri-cli 🦀: 2.11.4
+
+[-] Plugins
+
+[-] App
+    - build-type: bundle
+    - CSP: default-src 'self' ipc: http://ipc.localhost; connect-src 'self' https://api.github.com https://github.com; style-src 'self' 'unsafe-inline'
+    - frontendDist: ../src
+    - devUrl: http://localhost:1420/

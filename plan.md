@@ -37,5 +37,7 @@ Cross-platform runtime is only available on this Mac. Windows WSL and Linux adap
 - Green state in `docs/testing/post-fix.txt`: eight Rust tests, including isolated backup/syntax failure tests, passed; `cargo check` passed.
 - `node --check src/app.js` passed.
 - Cross-platform CI definition added at `.github/workflows/ci.yml`; it has not run in this local session.
-- Browser preview was visually inspected before the final backend/UI hardening; the latest refresh was blocked by the browser's localhost navigation policy. Current exact-revision visual evidence is INCOMPLETE.
-- `cargo tauri` is not installed and full Xcode is unavailable (`xcodebuild` requires Xcode); desktop runtime/package evidence is NOT_RUN.
+- Browser preview was visually inspected before the final backend/UI hardening; the browser's localhost navigation policy blocked an exact-revision refresh. The built Tauri app was then launched and inspected directly, so exact-revision native visual evidence is PASS.
+- `cargo tauri build --debug --bundles app` passed and produced `src-tauri/target/debug/bundle/macos/ohmyzsh-gui.app`; the app read the real `/Users/luckye/.zshrc`, showed the native sidebar/configuration/discover screens, and produced a no-op configuration preview without applying it. Evidence is recorded in `docs/testing/tauri-build-final.txt` and the grilling ledger.
+- `cargo tauri info` confirms macOS Command Line Tools and Rust are available; full Xcode is not installed. DMG bundling was attempted separately and failed in the platform bundler, while the `.app` bundle succeeded.
+- Native plugin install/update/remove, live GitHub search, token save/readback, Windows WSL, Linux runtime, and CI execution remain NOT_RUN because they require external or other-platform side effects/runners.

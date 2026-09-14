@@ -3,8 +3,8 @@ session_id: grilling-ohmyzsh-gui-20260914
 status: active
 topic: oh-my-zsh macOS GUI configuration and plugin manager
 created_at: 2026-09-14T15:50:00+08:00
-updated_at: 2026-09-14T19:55:00+08:00
-last_round: 8
+updated_at: 2026-09-14T20:20:00+08:00
+last_round: 9
 ---
 
 ## Goal
@@ -62,22 +62,22 @@ last_round: 8
 - F2 | state: resolved | source: round 4 | Owner chose combined catalogue, optional GitHub token, Homebrew-like update view, commit SHA tracking, and confirmation after preview.
 - F3 | state: resolved | source: round 4 | Owner changed platform to cross-platform and delegated technology choice; proceed with Tauri 2 + Rust + web UI.
 - F4 | state: resolved | source: round 5 | Cursor/Grok GUI research returned cited Tauri, zsh safety, plugin lifecycle, token, and Apple HIG guidance; record saved under `docs/research/`.
-- F5 | state: active | source: round 6-7 | Added conservative source-span parser, stale-preview transaction, isolated backup/syntax tests, OS credential store, GitHub client, inventory, and Tauri dispatch boundary. Full desktop build and cross-platform runtime remain to verify.
+- F5 | state: active | source: round 6-9 | Added conservative source-span parser, stale-preview transaction, isolated backup/syntax tests, OS credential store, GitHub client, inventory, and Tauri dispatch boundary. The macOS Tauri app now builds and has been visually inspected; other-platform runtime and side-effecting plugin lifecycle evidence remain open.
 
 ## Risks and conflicts
 
 - R1 | state: open | Editing shell startup files can break interactive shells; safe writes require backup, parse/validation, diff preview, and rollback.
 - R2 | state: open | Installing arbitrary shell plugins executes third-party shell code; source provenance, review status, permissions, and recovery need explicit policy.
 - R3 | state: open | A marketplace catalogue needs a source of truth, metadata schema, freshness/update behavior, and handling of deleted or malicious repositories.
-- R4 | state: open | Cursor/Grok availability and search output are not yet independently verified; GUI research was started and is still pending completion evidence.
+- R4 | state: mitigated | source: round 5 | Cursor/Grok GUI research was captured in `docs/research/cursor-grok-20260914.md`; direct CLI execution remains unverified because Terminal inspection was blocked.
 - R5 | state: open | Cross-platform zsh availability and platform-specific home/config paths vary; runtime capability checks are required.
 - R6 | state: mitigated | source: round 6 | Token uses keyring crate with native backend per OS; unavailable stores fail closed while anonymous search remains available.
-- R7 | state: open | source: round 7 | Latest visual refresh could not be re-opened through the browser localhost policy; prior screenshot proves the layout before the final read-only/inventory changes, not this exact revision.
+- R7 | state: mitigated | source: round 9 | Browser localhost policy blocked exact-revision browser refresh, but the exact built Tauri app was launched and inspected with native macOS accessibility/screenshot evidence.
 
 ## Final baseline
 
 - Intent baseline accepted by the owner in Round 2: personal macOS MVP, `.zshrc` first, official Oh My Zsh + GitHub sources, SwiftUI, and authorized read-only Cursor/Grok research.
-- Stage gate: intent accepted; design/spec accepted in round 4; implementation active with Tauri scaffold and Rust/frontend tests.
+- Stage gate: intent accepted; design/spec accepted in round 4; implementation active with a built/inspected macOS Tauri artifact and Rust/frontend tests. Cross-platform and side-effecting acceptance remain open.
 
 ## Changelog
 
@@ -88,7 +88,8 @@ last_round: 8
 - Round 5: Cursor GUI research completed with cited guidance; created Tauri scaffold, Rust commands, Apple-inspired frontend, and initial tests.
 - Round 6: Replaced naive config/file operations with source-span parsing, stale-preview apply plans, isolated filesystem tests, GitHub/keyring backend, and explicit browser read-only mode.
 - Round 7: Added custom checkout inventory, CI matrix, and corrected activity/credential semantics; latest visual refresh remained incomplete due localhost browser policy.
-- Round 8: Re-ran final Rust/frontend checks; confirmed Tauri CLI and full Xcode are unavailable on this host, so desktop build remains NOT_RUN.
+- Round 8: Re-ran final Rust/frontend checks; installed Tauri CLI and recorded the local environment limits.
+- Round 9: Built the debug `.app`, launched the exact artifact, read the real `.zshrc` without mutation, verified Configuration preview and Discover inventory, and recorded native visual evidence. DMG bundling failed in the platform bundler; `.app` bundling passed.
 
 ## Evidence updates
 
@@ -100,4 +101,7 @@ last_round: 8
 - E6 | state: blocked | source: CUA safety boundary 2026-09-14 | Directly inspecting the macOS Terminal app was denied by the computer-use safety boundary, so Cursor CLI/Grok execution was not independently verified.
 - E7 | state: observed | source: Apple HIG pages 2026-09-14 | Apple recommends macOS settings windows with stable toolbar panes, sidebars for top-level areas, concise toolbars with menu-bar equivalents, passive status feedback, and alerts reserved for critical/actionable or irreversible cases.
 - E8 | state: observed | source: Cursor GUI research 2026-09-14 | Cursor/Grok recommended Tauri 2; conservative top-level `.zshrc` rewriting; `zsh -n` as syntax-only validation; temporary checkout + pinned SHA + disabled hooks for plugins; optional token with rate-limit messaging; and WSL for Windows zsh. Full record: `docs/research/cursor-grok-20260914.md`.
-- E9 | state: observed | source: local commands 2026-09-14 | `cargo test` 8/8, `cargo check`, `cargo fmt --check`, and `node --check` pass; `cargo tauri` is not installed and `xcodebuild` is unavailable because only Command Line Tools are selected.
+- E9 | state: observed | source: local commands 2026-09-14 | `cargo test` 8/8, `cargo check`, `cargo fmt --check`, and `node --check` pass; `cargo tauri info` reports macOS arm64, Rust, Node, and Command Line Tools, with full Xcode absent.
+- E10 | state: observed | source: local build 2026-09-14 | `cargo tauri build --debug --bundles app` passed and produced `/Users/luckye/Documents/ohmyzsh-gui/src-tauri/target/debug/bundle/macos/ohmyzsh-gui.app`; detailed output is in `docs/testing/tauri-build-final.txt`.
+- E11 | state: observed | source: CUA native app inspection 2026-09-14 | The exact built app opened as `ohmyzsh-gui` at `tauri://localhost`, loaded the real `/Users/luckye/.zshrc`, showed `powerlevel10k/powerlevel10k` and the user's enabled plugins, produced a no-op Configuration preview, and displayed local custom plugin inventory in Discover. No Apply action was invoked.
+- E12 | state: incomplete | source: local commands and scope boundary 2026-09-14 | DMG packaging failed in `bundle_dmg.sh`; live GitHub search, token persistence, install/update/remove, Windows WSL, Linux runtime, and CI execution remain unrun.

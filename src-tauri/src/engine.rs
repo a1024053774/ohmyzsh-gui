@@ -259,6 +259,9 @@ impl Manager {
                 return Err("Commit must be a 40-character SHA".into());
             }
             s
+        } else if operation == "remove" {
+            let path = self.env.plugin_path(&repo.name)?;
+            self.env.repo_clean(&path)?
         } else {
             self.github()?.head(&repo)?
         };

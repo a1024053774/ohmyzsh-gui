@@ -48,6 +48,7 @@ Cross-platform runtime is only available on this Mac. Windows WSL and Linux adap
 - An optimized release `.app` bundle now builds locally; debug and release bundle outputs are recorded separately under `docs/testing/`.
 - The optimized release bundle was launched and visually inspected with the real user configuration loaded; no Apply action was invoked.
 - Marketplace safety now requires installation before enabling a GitHub plugin; uninstalled search results cannot be added to `.zshrc` by the Enable control.
+- The optimized release app completed a real no-op `.zshrc` Apply and Undo; filesystem readback matched the restore backup byte-for-byte. Evidence is in `docs/testing/live-user-config-noop-20260914.txt`.
 - Local Linux/Windows target probes reached native dependency compilation but were blocked by missing cross compilers/sysroots; evidence is in `docs/testing/cross-target-check-20260914.txt`. Hosted CI remains the authoritative cross-platform check.
 - Settings now queries only token presence/status from the OS credential store, never the token value; the native dialog visibly reports anonymous access when no token is configured and explains that saving an empty value removes it.
 - History semantics are now honest: configuration/install/remove records expose tested Undo; update records persist both current and previous SHA and expose Undo, with live rollback still requiring acceptance evidence.

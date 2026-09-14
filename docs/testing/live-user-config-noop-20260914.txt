@@ -1,0 +1,19 @@
+Live user configuration no-op Apply/Undo verification (2026-09-14)
+
+Surface: optimized release Tauri app
+Configuration: /Users/luckye/.zshrc
+
+Observed through the native UI:
+- Configuration read the real theme `powerlevel10k/powerlevel10k` and enabled plugin list.
+- Preview produced `No changes`.
+- Apply confirmation stated that a backup and `zsh -n` check would run.
+- Apply completed and Activity recorded a configuration/applied entry with a backup path.
+- Activity exposed Undo; confirmation completed successfully.
+- Activity recorded a second `undo/restored` entry with a second backup path.
+
+Filesystem readback after Undo:
+- `.zshrc` SHA-256: 33f13ee5b3d59c0fccdbbc66caa2330b5da745070822e8630bbcd6ab38260ccf
+- Latest restore backup SHA-256: 33f13ee5b3d59c0fccdbbc66caa2330b5da745070822e8630bbcd6ab38260ccf
+- `cmp` result: CONTENT_MATCH
+
+No configuration content was changed; this verified the real backup, syntax-check, atomic-write, journal, and restore path.

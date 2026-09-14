@@ -31,7 +31,7 @@
     </section>
   </main>
   <dialog id="confirm-dialog" class="modal"><form method="dialog"><h2 id="confirm-title">Apply change?</h2><p id="confirm-message"></p><div class="modal-actions"><button value="cancel" class="secondary">Cancel</button><button value="confirm" class="primary">Apply</button></div></form></dialog>
-  <dialog id="settings-dialog" class="modal"><form method="dialog" id="settings-form"><h2>Settings</h2><label class="field-label" for="github-token">GitHub token <span class="muted">optional</span></label><input id="github-token" type="password" autocomplete="off" placeholder="ghp_…" /><p class="hint">Without a token, GitHub search still works with public rate limits. The token stays local to this app.</p><div class="modal-actions"><button value="cancel" class="secondary">Cancel</button><button value="save" class="primary">Save</button></div></form></dialog>
+  <dialog id="settings-dialog" class="modal"><form method="dialog" id="settings-form"><h2>Settings</h2><label class="field-label" for="github-token">GitHub token <span class="muted">optional</span></label><input id="github-token" type="password" autocomplete="off" placeholder="ghp_…" /><p id="token-status" class="hint">Token status is private to this app.</p><p class="hint">Without a token, GitHub search still works with public rate limits. The token stays local to this app. Save an empty value to remove it.</p><div class="modal-actions"><button value="cancel" class="secondary">Cancel</button><button value="save" class="primary">Save</button></div></form></dialog>
   <script src="app.js" type="module"></script>
 </body>
 </html>

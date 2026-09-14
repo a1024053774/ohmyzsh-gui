@@ -113,6 +113,7 @@ pub enum Request {
     SetToken {
         token: String,
     },
+    TokenStatus,
     PreviewPlugin {
         operation: String,
         owner: String,
@@ -652,6 +653,21 @@ impl Manager {
                     message: Some("Token saved in OS credential store".into()),
                 })
             }
+            Request::TokenStatus => Ok(Response {
+                snapshot: None,
+                preview: None,
+                applied: None,
+                inventory: None,
+                search: None,
+                capability: None,
+                history: None,
+                updates: None,
+                message: Some(match github::token() {
+                    Ok(Some(_)) => "configured".into(),
+                    Ok(None) => "not_configured".into(),
+                    Err(e) => format!("unavailable: {e}"),
+                }),
+            }),
             Request::PreviewPlugin {
                 operation,
                 owner,

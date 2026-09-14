@@ -3,8 +3,8 @@ session_id: grilling-ohmyzsh-gui-20260914
 status: active
 topic: oh-my-zsh macOS GUI configuration and plugin manager
 created_at: 2026-09-14T15:50:00+08:00
-updated_at: 2026-09-14T19:40:00+08:00
-last_round: 7
+updated_at: 2026-09-14T19:55:00+08:00
+last_round: 8
 ---
 
 ## Goal
@@ -29,8 +29,8 @@ last_round: 7
 ## Decision tree
 
 - Plan / intent: accepted in round 2.
-- Design / spec: active; draft `spec.md` created and awaiting design decisions.
-- Build / implementation: not started.
+- Design / spec: accepted in round 4.
+- Build / implementation: active; Tauri source and tests are present.
 - Test / acceptance: not applicable yet.
 - Deploy / maintain: not applicable yet.
 
@@ -54,7 +54,7 @@ last_round: 7
 - Q2 | state: confirmed | source: round 2 | MVP scope is `.zshrc` and Oh My Zsh settings/plugin management; broader files deferred.
 - Q3 | state: confirmed | source: round 2 | Sources are official Oh My Zsh + GitHub; trust indicators and review-before-install remain design requirements.
 - Q4 | state: confirmed | source: round 2 | Use the available `agent` CLI/Cursor Grok session for read-only research.
-- Q5 | state: confirmed | source: round 2 | Prefer native SwiftUI macOS app.
+- Q5 | state: superseded | source: round 2, round 4 | SwiftUI-only was superseded by owner's cross-platform requirement; use Tauri 2 + Rust + web UI.
 
 ## Current frontier
 
@@ -88,6 +88,7 @@ last_round: 7
 - Round 5: Cursor GUI research completed with cited guidance; created Tauri scaffold, Rust commands, Apple-inspired frontend, and initial tests.
 - Round 6: Replaced naive config/file operations with source-span parsing, stale-preview apply plans, isolated filesystem tests, GitHub/keyring backend, and explicit browser read-only mode.
 - Round 7: Added custom checkout inventory, CI matrix, and corrected activity/credential semantics; latest visual refresh remained incomplete due localhost browser policy.
+- Round 8: Re-ran final Rust/frontend checks; confirmed Tauri CLI and full Xcode are unavailable on this host, so desktop build remains NOT_RUN.
 
 ## Evidence updates
 
@@ -99,3 +100,4 @@ last_round: 7
 - E6 | state: blocked | source: CUA safety boundary 2026-09-14 | Directly inspecting the macOS Terminal app was denied by the computer-use safety boundary, so Cursor CLI/Grok execution was not independently verified.
 - E7 | state: observed | source: Apple HIG pages 2026-09-14 | Apple recommends macOS settings windows with stable toolbar panes, sidebars for top-level areas, concise toolbars with menu-bar equivalents, passive status feedback, and alerts reserved for critical/actionable or irreversible cases.
 - E8 | state: observed | source: Cursor GUI research 2026-09-14 | Cursor/Grok recommended Tauri 2; conservative top-level `.zshrc` rewriting; `zsh -n` as syntax-only validation; temporary checkout + pinned SHA + disabled hooks for plugins; optional token with rate-limit messaging; and WSL for Windows zsh. Full record: `docs/research/cursor-grok-20260914.md`.
+- E9 | state: observed | source: local commands 2026-09-14 | `cargo test` 8/8, `cargo check`, `cargo fmt --check`, and `node --check` pass; `cargo tauri` is not installed and `xcodebuild` is unavailable because only Command Line Tools are selected.

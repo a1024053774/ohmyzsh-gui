@@ -37,4 +37,5 @@ Cross-platform runtime is only available on this Mac. Windows WSL and Linux adap
 - Green state in `docs/testing/post-fix.txt`: eight Rust tests, including isolated backup/syntax failure tests, passed; `cargo check` passed.
 - `node --check src/app.js` passed.
 - Cross-platform CI definition added at `.github/workflows/ci.yml`; it has not run in this local session.
-- Browser preview was previously visually inspected, but the latest refresh was blocked by the browser's localhost navigation policy after the temporary server ended. Current visual evidence is therefore INCOMPLETE for this revision.
+- Browser preview was visually inspected before the final backend/UI hardening; the latest refresh was blocked by the browser's localhost navigation policy. Current exact-revision visual evidence is INCOMPLETE.
+- `cargo tauri` is not installed and full Xcode is unavailable (`xcodebuild` requires Xcode); desktop runtime/package evidence is NOT_RUN.

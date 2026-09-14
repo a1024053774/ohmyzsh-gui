@@ -367,7 +367,7 @@ impl Manager {
                 let path = self.env.plugin_path(&repo.name)?;
                 let current = self.env.repo_clean(&path)?;
                 files.push(path.display().to_string());
-                format!("Remove {} at {} after disabling it in .zshrc. Checkout is quarantined for undo.",repo.slug(),&current[..8])
+                format!("Remove {} at {} after disabling it in .zshrc. Checkout is quarantined and recorded for manual restore.",repo.slug(),&current[..8])
             }
             _ => return Err("Unknown plugin operation".into()),
         };
@@ -439,7 +439,7 @@ impl Manager {
             Some(b.clone()),
             None,
             None,
-            true,
+            false,
             None,
         )?;
         Ok(Applied {
@@ -447,7 +447,7 @@ impl Manager {
             status: "applied".into(),
             backup: Some(b.display().to_string()),
             commit: None,
-            undo_available: true,
+            undo_available: false,
         })
     }
     fn apply_install(&mut self, id: &str, p: &Plan) -> Result<Applied, String> {
@@ -483,7 +483,7 @@ impl Manager {
             None,
             Some(repo.clone()),
             Some(got.clone()),
-            true,
+            false,
             None,
         )?;
         Ok(Applied {
@@ -491,7 +491,7 @@ impl Manager {
             status: "installed".into(),
             backup: None,
             commit: Some(got),
-            undo_available: true,
+            undo_available: false,
         })
     }
     fn apply_update(&mut self, id: &str, p: &Plan) -> Result<Applied, String> {
@@ -515,7 +515,7 @@ impl Manager {
             None,
             Some(repo.clone()),
             Some(got.clone()),
-            true,
+            false,
             None,
         )?;
         Ok(Applied {
@@ -523,7 +523,7 @@ impl Manager {
             status: format!("updated from {}", &old[..8]),
             backup: None,
             commit: Some(got),
-            undo_available: true,
+            undo_available: false,
         })
     }
     fn apply_remove(&mut self, id: &str, p: &Plan) -> Result<Applied, String> {
@@ -547,15 +547,15 @@ impl Manager {
             Some(backup.clone()),
             Some(repo.clone()),
             Some(p.target.clone().unwrap_or_default()),
-            true,
+            false,
             None,
         )?;
         Ok(Applied {
             id: id.into(),
-            status: "removed (quarantined for undo)".into(),
+            status: "removed (quarantined; manual restore is required)".into(),
             backup: Some(backup.display().to_string()),
             commit: None,
-            undo_available: true,
+            undo_available: false,
         })
     }
     fn record(

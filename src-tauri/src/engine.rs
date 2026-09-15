@@ -127,6 +127,12 @@ pub enum Request {
     },
     History,
     Updates,
+    RestoreBackup {
+        path: String,
+    },
+    DeleteBackup {
+        path: String,
+    },
 }
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Response {
@@ -721,6 +727,59 @@ impl Manager {
             undo_available: false,
         })
     }
+    fn checked_backup(&self, path: &str) -> Result<PathBuf, String> {
+        let root = fs::canonicalize(self.env.data.join("backups"))
+            .map_err(|_| "Backup directory is unavailable".to_string())?;
+        let candidate =
+            fs::canonicalize(path).map_err(|_| "Backup file is unavailable".to_string())?;
+        if !candidate.starts_with(&root)
+            || candidate.extension().and_then(|x| x.to_str()) != Some("zshrc")
+        {
+            return Err("Backup path is outside the managed backup directory".into());
+        }
+        Ok(candidate)
+    }
+    fn restore_backup(&mut self, path: &str) -> Result<Applied, String> {
+        let backup_path = self.checked_backup(path)?;
+        let restored = fs::read_to_string(&backup_path).map_err(|e| e.to_string())?;
+        let current = self.env.source()?;
+        let operation_id = system::id();
+        let backup = self.env.write_config(&current, &restored)?;
+        self.record(
+            &operation_id,
+            "backup_restore",
+            "restored",
+            vec![self.env.config.display().to_string()],
+            Some(backup.clone()),
+            None,
+            None,
+            None,
+            false,
+            None,
+        )?;
+        Ok(Applied {
+            id: operation_id,
+            status: "backup restored".into(),
+            backup: Some(backup.display().to_string()),
+            commit: None,
+            undo_available: false,
+        })
+    }
+    fn delete_backup(&mut self, path: &str) -> Result<(), String> {
+        let backup_path = self.checked_backup(path)?;
+        fs::remove_file(&backup_path).map_err(|e| e.to_string())?;
+        let canonical = backup_path.display().to_string();
+        for entry in &mut self.journal {
+            if entry
+                .backup
+                .as_deref()
+                .is_some_and(|saved| saved == path || saved == canonical)
+            {
+                entry.undo_available = false;
+            }
+        }
+        self.save_history()
+    }
     pub fn request(&mut self, r: Request) -> Result<Response, String> {
         match r {
             Request::Read => Ok(Response {
@@ -833,6 +892,31 @@ impl Manager {
                 updates: Some(self.updates()?),
                 message: None,
             }),
+            Request::RestoreBackup { path } => Ok(Response {
+                snapshot: None,
+                preview: None,
+                applied: Some(self.restore_backup(&path)?),
+                inventory: None,
+                search: None,
+                capability: None,
+                history: None,
+                updates: None,
+                message: None,
+            }),
+            Request::DeleteBackup { path } => {
+                self.delete_backup(&path)?;
+                Ok(Response {
+                    snapshot: None,
+                    preview: None,
+                    applied: None,
+                    inventory: None,
+                    search: None,
+                    capability: None,
+                    history: None,
+                    updates: None,
+                    message: Some("Backup deleted".into()),
+                })
+            }
             Request::Undo { history_id } => Ok(Response {
                 snapshot: None,
                 preview: None,
@@ -880,6 +964,28 @@ mod tests {
         let decoded: History = serde_json::from_str(legacy).unwrap();
         assert!(decoded.repo.is_none());
         assert!(decoded.commit.is_none());
+    }
+
+    #[test]
+    fn backup_path_is_scoped_to_managed_directory() {
+        let dir = tempfile::tempdir().unwrap();
+        let env = Environment::at(dir.path().to_path_buf()).unwrap();
+        let backups = env.data.join("backups");
+        fs::create_dir_all(&backups).unwrap();
+        let managed = backups.join("one.zshrc");
+        fs::write(&managed, "ZSH_THEME=\"a\"\nplugins=(git)\n").unwrap();
+        let manager = Manager {
+            journal_path: env.data.join("history.json"),
+            env,
+            plans: HashMap::new(),
+            journal: vec![],
+        };
+        assert!(manager
+            .checked_backup(&managed.display().to_string())
+            .is_ok());
+        assert!(manager
+            .checked_backup(&dir.path().join("outside.zshrc").display().to_string())
+            .is_err());
     }
 
     #[test]

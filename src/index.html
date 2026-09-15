@@ -26,10 +26,10 @@
     <section class="workspace">
       <header class="toolbar">
         <div><h1 id="page-title">Overview</h1><p id="page-subtitle">Review your shell setup before making a change.</p></div>
-        <div class="toolbar-actions"><button class="icon-button" id="refresh-button" title="Refresh configuration">↻</button><label class="search"><span>⌕</span><input id="global-search" type="search" placeholder="Search plugins" /></label></div>
+        <div class="toolbar-actions"><button class="icon-button sidebar-toggle" id="sidebar-toggle" data-i18n-title="status.toggleSidebar" data-i18n-aria="status.toggleSidebar">◧</button><button class="icon-button" id="refresh-button" data-i18n-title="status.refresh">↻</button><label class="search"><span>⌕</span><input id="global-search" type="search" data-i18n-placeholder="status.searchPlaceholder" /></label></div>
       </header>
       <div id="content" class="content"></div>
-      <footer class="statusbar"><span class="status-dot" id="status-dot"></span><span id="status-text">Ready</span><span class="spacer"></span><span class="muted">Changes are previewed before Apply</span></footer>
+      <footer class="statusbar"><span class="status-dot" id="status-dot"></span><span id="status-text">Ready</span><span class="spacer"></span><span class="muted" data-i18n="status.footer">Changes are previewed before Apply</span></footer>
     </section>
   </main>
   <dialog id="confirm-dialog" class="modal"><form method="dialog"><h2 id="confirm-title" data-i18n="confirm.title">Apply change?</h2><p id="confirm-message"></p><div class="modal-actions"><button value="cancel" class="secondary" data-i18n="common.cancel">Cancel</button><button value="confirm" class="primary" data-i18n="common.apply">Apply</button></div></form></dialog>

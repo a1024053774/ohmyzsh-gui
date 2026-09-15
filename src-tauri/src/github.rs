@@ -38,6 +38,7 @@ pub struct Candidate {
     pub stars: u64,
     pub license: String,
     pub updated: String,
+    pub avatar: String,
 }
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Search {
@@ -164,6 +165,7 @@ impl GitHub {
             stars: v["stargazers_count"].as_u64().unwrap_or(0),
             license: v["license"]["spdx_id"].as_str().unwrap_or("Unknown").into(),
             updated: v["updated_at"].as_str().unwrap_or("").into(),
+            avatar: v["owner"]["avatar_url"].as_str().unwrap_or("").into(),
         })
     }
 

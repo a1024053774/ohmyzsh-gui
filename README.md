@@ -10,6 +10,8 @@ The layout follows the Apple Human Interface Guidelines for [sidebars](https://d
 
 Appearance defaults to the system setting and can be overridden with Light or Dark in Settings. The interface follows Apple’s [Dark Mode guidance](https://developer.apple.com/design/human-interface-guidelines/dark-mode) and provides English, Simplified Chinese, and system language selection. Liquid Glass is implemented as a restrained webview material with `backdrop-filter`, a user-facing opt-out, and a reduced-transparency fallback. This follows Apple’s guidance to use Liquid Glass sparingly and to adapt when transparency or motion accessibility settings reduce effects; the native reference is [Applying Liquid Glass to custom views](https://developer.apple.com/documentation/SwiftUI/Applying-Liquid-Glass-to-custom-views).
 
+The configuration and plugin-management flows take cues from [ShellCraft](https://github.com/omarshahine/ShellCraft): read the real dotfile, expose only recognized values as structured controls, preserve the rest of the source, and keep reversible backups. The Discover and Installed split view follows the browse/select/detail pattern used by [omz-plugin-browser](https://github.com/hernanmd/omz-plugin-browser), with repository avatars, descriptions, stars, and direct GitHub links.
+
 ## Run
 
 Install the Tauri CLI, then run `cargo tauri dev` from the repository root. For a browser-only visual preview, run `npm run dev` and open `http://localhost:1420`; preview mode uses a safe in-memory `.zshrc` fixture and explicitly refuses Apply, token storage, and GitHub requests.

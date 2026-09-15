@@ -112,6 +112,10 @@ pub enum Request {
     Search {
         query: String,
     },
+    Readme {
+        owner: String,
+        repository: String,
+    },
     SetToken {
         token: String,
     },
@@ -835,6 +839,20 @@ impl Manager {
                 updates: None,
                 message: None,
             }),
+            Request::Readme { owner, repository } => {
+                let repo = Repo::parse(&format!("{owner}/{repository}"))?;
+                Ok(Response {
+                    snapshot: None,
+                    preview: None,
+                    applied: None,
+                    inventory: None,
+                    search: None,
+                    capability: None,
+                    history: None,
+                    updates: None,
+                    message: Some(self.github()?.readme(&repo)?),
+                })
+            }
             Request::SetToken { token } => {
                 github::set_token(&token)?;
                 Ok(Response {

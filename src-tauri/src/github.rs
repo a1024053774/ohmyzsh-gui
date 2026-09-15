@@ -1,4 +1,5 @@
 use crate::config;
+use base64::{engine::general_purpose, Engine as _};
 use reqwest::blocking::Client;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -207,5 +208,14 @@ impl GitHub {
             })
             .collect::<Vec<_>>()
             .join("\n"))
+    }
+    pub fn readme(&self, repo: &Repo) -> Result<String, String> {
+        let v = self.get(&format!("/repos/{}/readme", repo.slug()), &[])?.0;
+        let content = v["content"].as_str().ok_or("README content unavailable")?;
+        let normalized = content.lines().collect::<String>();
+        let bytes = general_purpose::STANDARD
+            .decode(normalized)
+            .map_err(|_| "README content is not valid base64")?;
+        String::from_utf8(bytes).map_err(|_| "README is not valid UTF-8".into())
     }
 }

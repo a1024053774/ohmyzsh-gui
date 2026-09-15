@@ -4,10 +4,11 @@
 
 - All primary subpages now use the selected language, including Overview, Configuration, Installed, Discover, Updates, Activity, controls, empty states, and status messages.
 - The Homebrew-style toolbar has a persistent sidebar collapse button. The choice is stored locally and the collapsed state keeps icon navigation available.
+- The compact sidebar keeps an inline expand button beside the logo, so the collapsed state remains reversible without relying on the toolbar.
 - Configuration reads the parsed `.zshrc` values and renders the current theme plus recognized plugins as checkboxes. Preview still routes through the existing syntax-check, backup, stale-source, and atomic-apply path.
 - Installed and Discover rows use repository/fallback icons, descriptions, star counts, update dates, installed badges, and direct GitHub repository links.
 - Updates no longer presents an unexplained initial `0`: it shows an em dash before the first check, starts a real check when the Updates page opens, and reports the result in the status bar.
-- Activity now lists configuration backups with Restore and Delete actions. Backend path validation restricts both operations to `.ohmyzsh-gui/backups/*.zshrc`; restoring creates a new safety backup and records the operation.
+- Activity now lists configuration backups with a localized date/time, Restore and Delete actions. Backend path validation restricts both operations to `.ohmyzsh-gui/backups/*.zshrc`; restoring creates a new safety backup and records the operation.
 
 ## Verification
 
@@ -16,4 +17,5 @@
 - `cargo test --manifest-path src-tauri/Cargo.toml`: PASS — 11 passed, 1 ignored live GitHub smoke test
 - `cargo tauri build --debug --bundles app`: PASS — debug macOS app bundle created
 - Native UI: PASS — Chinese Overview, Configuration plugin switches, collapsed sidebar, Discover filters and live GitHub metadata, Updates check result, and Activity backup list were inspected.
+- Native UI: PASS — collapsed sidebar expanded through the inline arrow, backup rows showed localized date/time, and Settings used the same light surface tone as the main cards.
 - Backup mutation actions were not run against the user's real backups during visual verification; they require the app's confirmation dialog.

@@ -52,3 +52,10 @@ html.sidebar-collapsed .app-shell{grid-template-columns:76px 1fr}html.sidebar-co
 html[data-theme="dark"] .switch-row{border-color:#38383a}html[data-theme="dark"] .switch-row:hover{background:#3a3024}html[data-theme="light"] .switch-row{border-color:#e4e4e7}html[data-theme="light"] .switch-row:hover{background:#fff8ef}
 .backup-list{display:grid;gap:8px}.backup-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px 0;border-bottom:1px solid #eee}.backup-row:last-child{border-bottom:0}.backup-row strong,.backup-row small{display:block}.backup-row small{margin-top:3px;color:#8e8e93;font-size:11px;word-break:break-all}.backup-row .actions{margin-top:0;flex:0 0 auto}
 @media (prefers-color-scheme:dark){.backup-row{border-color:#38383a}}html[data-theme="dark"] .backup-row{border-color:#38383a}
+
+/* Keep the sidebar control visible in both expanded and compact states. */
+.brand{position:relative}.sidebar-inline-toggle{margin-left:auto;width:24px;height:24px;border:0;border-radius:7px;background:rgba(118,118,128,.12);color:#636366;cursor:pointer;line-height:1;font-size:18px;transition:background .16s ease,transform .22s ease}.sidebar-inline-toggle:hover{background:rgba(118,118,128,.22)}
+html.sidebar-collapsed .brand{height:58px;padding-bottom:18px}.sidebar-inline-toggle{transform:rotate(0deg)}html.sidebar-collapsed .sidebar-inline-toggle{position:absolute;right:-2px;bottom:0;width:22px;height:20px;font-size:16px;transform:rotate(180deg);z-index:2}html.sidebar-collapsed .nav-list{margin-top:4px}
+/* Keep settings on the same visual surface as the main cards in both modes. */
+.modal{background:rgba(255,255,255,.92);border:1px solid rgba(0,0,0,.08);color:#1d1d1f;box-shadow:0 20px 60px rgba(15,23,42,.18)}html[data-theme="dark"] .modal{background:rgba(44,44,46,.94);border-color:#4a4a4d;color:#f5f5f7}html.glass-enabled .modal{background:color-mix(in srgb,#ffffff 84%,transparent);backdrop-filter:blur(22px) saturate(125%);-webkit-backdrop-filter:blur(22px) saturate(125%)}html[data-theme="dark"].glass-enabled .modal{background:color-mix(in srgb,#2c2c2e 88%,transparent)}
+html.sidebar-collapsed .brand-name{display:none}

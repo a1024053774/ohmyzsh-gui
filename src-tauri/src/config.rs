@@ -239,22 +239,50 @@ pub fn diff(before: &str, after: &str) -> String {
     if before == after {
         return "No changes".into();
     }
-    // A full-file unified hunk is exact, including additions/deletions and newline state.
-    let a: Vec<_> = before.split_inclusive('\n').collect();
-    let b: Vec<_> = after.split_inclusive('\n').collect();
+    let a: Vec<&str> = before.split_inclusive('\n').collect();
+    let b: Vec<&str> = after.split_inclusive('\n').collect();
+    let mut start = 0;
+    while start < a.len() && start < b.len() && a[start] == b[start] {
+        start += 1;
+    }
+    let mut end_a = a.len();
+    let mut end_b = b.len();
+    while end_a > start && end_b > start && a[end_a - 1] == b[end_b - 1] {
+        end_a -= 1;
+        end_b -= 1;
+    }
+    const CTX: usize = 3;
+    let a0 = start.saturating_sub(CTX);
+    let a1 = (end_a + CTX).min(a.len());
+    let b1 = (end_b + CTX).min(b.len());
     let mut out = format!(
-        "--- .zshrc (current)\n+++ .zshrc (proposed)\n@@ -1,{} +1,{} @@\n",
-        a.len(),
-        b.len()
+        "--- .zshrc (current)\n+++ .zshrc (proposed)\n@@ -{},{} +{},{} @@\n",
+        a0 + 1,
+        a1 - a0,
+        a0 + 1,
+        b1 - a0
     );
-    for (sign, lines) in [('-', a), ('+', b)] {
-        for l in lines {
-            out.push(sign);
-            out.push_str(l);
-            if !l.ends_with('\n') {
-                out.push_str("\n\\ No newline at end of file\n")
-            }
+    for line in &a[a0..start] {
+        out.push(' ');
+        out.push_str(line);
+    }
+    for line in &a[start..end_a] {
+        out.push('-');
+        out.push_str(line);
+        if !line.ends_with('\n') {
+            out.push_str("\n\\ No newline at end of file\n");
         }
+    }
+    for line in &b[start..end_b] {
+        out.push('+');
+        out.push_str(line);
+        if !line.ends_with('\n') {
+            out.push_str("\n\\ No newline at end of file\n");
+        }
+    }
+    for line in &a[end_a..a1] {
+        out.push(' ');
+        out.push_str(line);
     }
     out
 }
@@ -328,5 +356,15 @@ mod tests {
                 plugins: vec![]
             })
             .is_err());
+    }
+    #[test]
+    fn diff_shows_changed_lines_with_context() {
+        let before = "keep-a\nkeep-b\nplugins=(git)\nkeep-c\nkeep-d\n";
+        let after = "keep-a\nkeep-b\nplugins=(git z.lua)\nkeep-c\nkeep-d\n";
+        let d = diff(before, after);
+        assert!(d.contains("+plugins=(git z.lua)"), "{d}");
+        assert!(d.contains("-plugins=(git)"), "{d}");
+        assert!(!d.contains("-keep-a"), "{d}");
+        assert!(d.contains(" keep-b\n"), "{d}");
     }
 }

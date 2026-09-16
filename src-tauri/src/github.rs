@@ -93,7 +93,7 @@ impl GitHub {
             client: Client::builder()
                 .timeout(std::time::Duration::from_secs(25))
                 .redirect(reqwest::redirect::Policy::none())
-                .user_agent("ohmyzsh-gui/0.1")
+                .user_agent("ohmyzsh-gui/1.0")
                 .build()
                 .map_err(|e| e.to_string())?,
             anonymous,
@@ -140,7 +140,12 @@ impl GitHub {
         Ok((r.json().map_err(|_| "Invalid GitHub response")?, rem, reset))
     }
     pub fn search(&self, q: &str) -> Result<Search, String> {
-        let q = format!("{} topic:zsh-plugin", q.trim());
+        let q = q.trim();
+        let q = if q.eq_ignore_ascii_case("zsh plugin") {
+            "topic:zsh-plugin".to_string()
+        } else {
+            format!("{q} zsh")
+        };
         let (v, remaining, reset) = self.get(
             "/search/repositories",
             &[("q", &q), ("sort", "stars"), ("per_page", "30")],

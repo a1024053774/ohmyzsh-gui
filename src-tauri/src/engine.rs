@@ -4,7 +4,12 @@ use crate::{
     system::{self, Environment},
 };
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, fs, path::PathBuf};
+use std::{
+    collections::HashMap,
+    fs,
+    path::{Path, PathBuf},
+    process::Command,
+};
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Snapshot {
@@ -17,12 +22,23 @@ pub struct Snapshot {
     pub plugin_root: String,
     pub installed_custom: Vec<String>,
     pub installed_custom_info: Vec<InstalledPlugin>,
+    #[serde(default)]
+    pub official_plugins: Vec<CatalogItem>,
+    #[serde(default)]
+    pub themes: Vec<String>,
+}
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct CatalogItem {
+    pub name: String,
+    pub summary: String,
 }
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InstalledPlugin {
     pub name: String,
     pub repo: Option<Repo>,
     pub current_sha: Option<String>,
+    #[serde(default)]
+    pub loadable: bool,
 }
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Preview {
@@ -137,6 +153,13 @@ pub enum Request {
     DeleteBackup {
         path: String,
     },
+    PluginReadme {
+        name: String,
+    },
+    OpenUrl {
+        url: String,
+    },
+    OpenTerminal,
 }
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Response {
@@ -185,33 +208,38 @@ impl Manager {
         self.env.resolve_layout()?;
         let source = self.env.source()?;
         let d = Document::parse(source.clone());
-        let installed_custom = fs::read_dir(self.env.custom.join("plugins"))
-            .ok()
-            .into_iter()
-            .flatten()
-            .filter_map(|e| e.ok())
-            .filter(|e| e.file_type().map(|t| t.is_dir()).unwrap_or(false))
-            .filter_map(|e| e.file_name().to_str().map(String::from))
-            .filter(|n| config::component(n))
-            .collect::<Vec<_>>();
+        let mut installed_custom = list_custom_dirs(&self.env.custom.join("plugins"));
+        for name in list_custom_dirs(&self.env.custom.join("themes")) {
+            if !installed_custom.iter().any(|n| n == &name) {
+                installed_custom.push(name);
+            }
+        }
         let installed_custom_info = installed_custom
             .iter()
             .map(|name| {
-                let path = self.env.plugin_path(name).ok();
+                let path = self.checkout_dir(name).ok();
                 let current_sha = path.as_deref().and_then(|p| self.env.repo_clean(p).ok());
                 let repo = path.as_deref().and_then(|p| {
-                    self.journal.iter().rev().find_map(|h| {
-                        h.files
-                            .iter()
-                            .any(|f| f == &p.display().to_string())
-                            .then(|| h.repo.clone())
-                            .flatten()
-                    })
+                    self.journal
+                        .iter()
+                        .rev()
+                        .find_map(|h| {
+                            h.files
+                                .iter()
+                                .any(|f| f == &p.display().to_string())
+                                .then(|| h.repo.clone())
+                                .flatten()
+                        })
+                        .or_else(|| origin_repo(&self.env, p))
                 });
                 InstalledPlugin {
                     name: name.clone(),
                     repo,
                     current_sha,
+                    loadable: path
+                        .as_ref()
+                        .map(|p| omz_plugin_file(p, name))
+                        .unwrap_or(false),
                 }
             })
             .collect();
@@ -225,7 +253,107 @@ impl Manager {
             plugin_root: self.env.custom.join("plugins").display().to_string(),
             installed_custom,
             installed_custom_info,
+            official_plugins: catalog_dirs(&self.env.zsh.join("plugins")),
+            themes: list_themes(&self.env.custom.join("themes")),
         })
+    }
+    fn plugin_readme(&self, name: &str) -> Result<String, String> {
+        if !config::component(name) {
+            return Err("Invalid plugin name".into());
+        }
+        let candidates = [
+            self.env.zsh.join("plugins").join(name).join("README.md"),
+            self.env.custom.join("plugins").join(name).join("README.md"),
+        ];
+        for path in candidates {
+            if !path.is_file() {
+                continue;
+            }
+            let root = path
+                .parent()
+                .and_then(|p| p.parent())
+                .and_then(|p| p.parent())
+                .ok_or("Invalid README path")?;
+            if !contained(&path, root) {
+                continue;
+            }
+            let bytes = fs::read(&path).map_err(|e| e.to_string())?;
+            let text = String::from_utf8_lossy(&bytes[..bytes.len().min(48_000)]).into_owned();
+            if !text.trim().is_empty() {
+                return Ok(text);
+            }
+        }
+        Err("README not found for this plugin".into())
+    }
+    fn open_url(&self, url: &str) -> Result<(), String> {
+        let url = safe_github_url(url)?;
+        let status = {
+            #[cfg(target_os = "macos")]
+            {
+                Command::new("open").arg(&url).status()
+            }
+            #[cfg(target_os = "windows")]
+            {
+                Command::new("cmd").args(["/C", "start", "", &url]).status()
+            }
+            #[cfg(all(not(target_os = "macos"), not(target_os = "windows")))]
+            {
+                Command::new("xdg-open").arg(&url).status()
+            }
+        }
+        .map_err(|e| e.to_string())?;
+        if status.success() {
+            Ok(())
+        } else {
+            Err("Could not open the GitHub link".into())
+        }
+    }
+    fn open_terminal(&self) -> Result<(), String> {
+        let status = {
+            #[cfg(target_os = "macos")]
+            {
+                Command::new("osascript")
+                    .args(["-e", "tell application \"Terminal\" to do script \"\""])
+                    .status()
+            }
+            #[cfg(target_os = "windows")]
+            {
+                Command::new("cmd").args(["/C", "start", "cmd"]).status()
+            }
+            #[cfg(all(not(target_os = "macos"), not(target_os = "windows")))]
+            {
+                Command::new("x-terminal-emulator").status()
+            }
+        }
+        .map_err(|e| e.to_string())?;
+        if status.success() {
+            Ok(())
+        } else {
+            Err("Could not open a new terminal".into())
+        }
+    }
+    fn can_enable_plugin(&self, name: &str) -> bool {
+        if !config::component(name) {
+            return false;
+        }
+        let official = self
+            .env
+            .zsh
+            .join("plugins")
+            .join(name)
+            .join(format!("{name}.plugin.zsh"));
+        official.is_file() || omz_plugin_file(&self.env.custom.join("plugins").join(name), name)
+    }
+    fn checkout_dir(&self, name: &str) -> Result<PathBuf, String> {
+        let plugin = self.env.plugin_path(name)?;
+        if plugin.exists() {
+            return Ok(plugin);
+        }
+        let theme = self.env.theme_path(name)?;
+        if theme.exists() {
+            return Ok(theme);
+        }
+        Err(format!("{name} is not installed"))
     }
     fn cap(&mut self) -> Result<Capability, String> {
         self.env.resolve_layout()?;
@@ -309,6 +437,16 @@ impl Manager {
     ) -> Result<Response, String> {
         let source = expected.unwrap_or(self.env.source()?);
         let d = Document::parse(source.clone());
+        for name in &plugins {
+            if d.values.plugins.iter().any(|p| p == name) {
+                continue;
+            }
+            if !self.can_enable_plugin(name) {
+                return Err(format!(
+                    "{name} is not a loadable Oh My Zsh plugin. Install a regular plugin, or keep it out of plugins=()."
+                ));
+            }
+        }
         let proposed = d.edit(&Values { theme, plugins })?;
         let p = Plan {
             operation: "configuration".into(),
@@ -350,17 +488,19 @@ impl Manager {
         };
         let detail = match operation.as_str() {
             "install" => {
-                if self.env.plugin_path(&repo.name)?.exists() {
+                if self.env.plugin_path(&repo.name)?.exists()
+                    || self.env.theme_path(&repo.name)?.exists()
+                {
                     return Err("Plugin already installed".into());
                 }
                 format!(
-                    "Install {} at commit {}. Git hooks and submodules are disabled.",
+                    "Install {} at commit {}. Regular Oh My Zsh plugins are enabled in .zshrc. Themes go into custom/themes. Other checkouts are not added to plugins=(). Git hooks and submodules are disabled.",
                     repo.slug(),
                     &target[..8]
                 )
             }
             "update" => {
-                let path = self.env.plugin_path(&repo.name)?;
+                let path = self.checkout_dir(&repo.name)?;
                 let current = self.env.repo_clean(&path)?;
                 let summary = self
                     .github()?
@@ -376,7 +516,7 @@ impl Manager {
                 )
             }
             "remove" => {
-                let path = self.env.plugin_path(&repo.name)?;
+                let path = self.checkout_dir(&repo.name)?;
                 let current = self.env.repo_clean(&path)?;
                 files.push(path.display().to_string());
                 format!("Remove {} at {} after disabling it in .zshrc. Checkout is quarantined and recorded for manual restore.",repo.slug(),&current[..8])
@@ -466,10 +606,9 @@ impl Manager {
     fn apply_install(&mut self, id: &str, p: &Plan) -> Result<Applied, String> {
         let repo = p.repo.as_ref().unwrap();
         let target = p.target.as_ref().unwrap();
-        let path = self.env.plugin_path(&repo.name)?;
-        let parent = path.parent().ok_or("Missing plugin root")?;
-        fs::create_dir_all(parent).map_err(|e| e.to_string())?;
-        let tmp = parent.join(format!(".{}-{}", repo.name, system::id()));
+        let staging_root = self.env.custom.join("plugins");
+        fs::create_dir_all(&staging_root).map_err(|e| e.to_string())?;
+        let tmp = staging_root.join(format!(".{}-{}", repo.name, system::id()));
         self.env.git(
             None,
             &[
@@ -487,13 +626,45 @@ impl Manager {
             let _ = fs::remove_dir_all(&tmp);
             return Err("Checkout did not reach requested commit".into());
         }
+        let loadable = omz_plugin_file(&tmp, &repo.name);
+        let theme = theme_literal_in(&tmp, &repo.name);
+        let path = if !loadable && theme.is_some() {
+            self.env.theme_path(&repo.name)?
+        } else {
+            self.env.plugin_path(&repo.name)?
+        };
+        if let Some(parent) = path.parent() {
+            fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+        }
         fs::rename(&tmp, &path).map_err(|e| format!("Plugin activation failed: {e}"))?;
+        let mut backup = None;
+        let mut status = "installed".to_string();
+        if loadable || theme.is_some() {
+            let source = self.env.source()?;
+            let d = Document::parse(source.clone());
+            let mut values = d.values.clone();
+            if loadable && !values.plugins.iter().any(|n| n == &repo.name) {
+                values.plugins.push(repo.name.clone());
+            }
+            if let Some(theme) = theme {
+                values.theme = theme;
+                status = "installed theme".into();
+            } else if loadable {
+                status = "installed and enabled".into();
+            }
+            if values != d.values {
+                let proposed = d.edit(&values)?;
+                backup = Some(self.env.write_config(&source, &proposed)?);
+            }
+        } else {
+            status = "installed checkout; not enabled because it is not an Oh My Zsh plugin".into();
+        }
         self.record(
             id,
             "install",
             "applied",
             vec![path.display().to_string()],
-            None,
+            backup.clone(),
             Some(repo.clone()),
             Some(got.clone()),
             None,
@@ -502,8 +673,8 @@ impl Manager {
         )?;
         Ok(Applied {
             id: id.into(),
-            status: "installed".into(),
-            backup: None,
+            status,
+            backup: backup.map(|b| b.display().to_string()),
             commit: Some(got),
             undo_available: true,
         })
@@ -511,7 +682,7 @@ impl Manager {
     fn apply_update(&mut self, id: &str, p: &Plan) -> Result<Applied, String> {
         let repo = p.repo.as_ref().unwrap();
         let target = p.target.as_ref().unwrap();
-        let path = self.env.plugin_path(&repo.name)?;
+        let path = self.checkout_dir(&repo.name)?;
         let old = self.env.repo_clean(&path)?;
         self.env
             .git(Some(&path), &["fetch", "--no-tags", "origin", target])?;
@@ -543,7 +714,7 @@ impl Manager {
     }
     fn apply_remove(&mut self, id: &str, p: &Plan) -> Result<Applied, String> {
         let repo = p.repo.as_ref().unwrap();
-        let path = self.env.plugin_path(&repo.name)?;
+        let path = self.checkout_dir(&repo.name)?;
         let before = p.expected_source.as_ref().ok_or("Missing snapshot")?;
         let after = p.proposed_source.as_ref().ok_or("Missing proposal")?;
         let backup = self.env.write_config(before, after)?;
@@ -946,8 +1117,212 @@ impl Manager {
                 updates: None,
                 message: None,
             }),
+            Request::PluginReadme { name } => Ok(Response {
+                snapshot: None,
+                preview: None,
+                applied: None,
+                inventory: None,
+                search: None,
+                capability: None,
+                history: None,
+                updates: None,
+                message: Some(self.plugin_readme(&name)?),
+            }),
+            Request::OpenUrl { url } => {
+                self.open_url(&url)?;
+                Ok(Response {
+                    snapshot: None,
+                    preview: None,
+                    applied: None,
+                    inventory: None,
+                    search: None,
+                    capability: None,
+                    history: None,
+                    updates: None,
+                    message: Some("opened".into()),
+                })
+            }
+            Request::OpenTerminal => {
+                self.open_terminal()?;
+                Ok(Response {
+                    snapshot: None,
+                    preview: None,
+                    applied: None,
+                    inventory: None,
+                    search: None,
+                    capability: None,
+                    history: None,
+                    updates: None,
+                    message: Some("opened-terminal".into()),
+                })
+            }
         }
     }
+}
+
+fn origin_repo(env: &Environment, path: &Path) -> Option<Repo> {
+    env.git(Some(path), &["remote", "get-url", "origin"])
+        .ok()
+        .and_then(|url| Repo::parse(&url).ok())
+}
+
+fn contained(path: &Path, root: &Path) -> bool {
+    let Ok(path) = fs::canonicalize(path) else {
+        return false;
+    };
+    let Ok(root) = fs::canonicalize(root) else {
+        return false;
+    };
+    path.starts_with(root)
+}
+
+fn readme_summary(dir: &Path) -> String {
+    let bytes = fs::read(dir.join("README.md")).unwrap_or_default();
+    let text = String::from_utf8_lossy(&bytes[..bytes.len().min(4_000)]);
+    let line = text
+        .lines()
+        .map(str::trim)
+        .find(|line| {
+            !line.is_empty()
+                && !line.starts_with('#')
+                && !line.starts_with('<')
+                && !line.starts_with("[!")
+                && !line.starts_with("![")
+                && !line.starts_with("---")
+        })
+        .or_else(|| {
+            text.lines()
+                .map(str::trim)
+                .find(|line| line.starts_with("# "))
+                .map(|line| line.trim_start_matches('#').trim())
+        })
+        .unwrap_or("");
+    clean_markdown(line).chars().take(140).collect()
+}
+
+fn clean_markdown(s: &str) -> String {
+    use std::sync::OnceLock;
+    static ATTR: OnceLock<regex::Regex> = OnceLock::new();
+    static LINK: OnceLock<regex::Regex> = OnceLock::new();
+    static URL: OnceLock<regex::Regex> = OnceLock::new();
+    let s = ATTR
+        .get_or_init(|| regex::Regex::new(r"\{#[^}]*\}").expect("attr"))
+        .replace_all(s, "");
+    let s = LINK
+        .get_or_init(|| regex::Regex::new(r"\[([^\]]+)\]\([^)]*\)").expect("link"))
+        .replace_all(&s, "$1");
+    let s = URL
+        .get_or_init(|| regex::Regex::new(r"https?://\S+").expect("url"))
+        .replace_all(&s, "");
+    s.replace('`', "")
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+fn catalog_dirs(root: &Path) -> Vec<CatalogItem> {
+    let mut items = fs::read_dir(root)
+        .ok()
+        .into_iter()
+        .flatten()
+        .filter_map(|e| e.ok())
+        .filter(|e| e.file_type().map(|t| t.is_dir()).unwrap_or(false))
+        .filter_map(|e| {
+            let name = e.file_name().into_string().ok()?;
+            config::component(&name).then_some(CatalogItem {
+                summary: readme_summary(&e.path()),
+                name,
+            })
+        })
+        .collect::<Vec<_>>();
+    items.sort_by(|a, b| a.name.cmp(&b.name));
+    items
+}
+
+fn omz_plugin_file(dir: &Path, name: &str) -> bool {
+    dir.join(format!("{name}.plugin.zsh")).is_file()
+}
+fn theme_literal_in(dir: &Path, name: &str) -> Option<String> {
+    // Theme checkouts live in custom/themes/{name}/, so Oh My Zsh needs a slash
+    // theme like {name}/{stem} rather than a bare file name.
+    if dir.join(format!("{name}.zsh-theme")).is_file() {
+        return Some(format!("{name}/{name}"));
+    }
+    if dir.join(name).join(format!("{name}.zsh-theme")).is_file() {
+        return Some(format!("{name}/{name}"));
+    }
+    let mut found = Vec::new();
+    let Ok(entries) = fs::read_dir(dir) else {
+        return None;
+    };
+    for entry in entries.filter_map(|e| e.ok()) {
+        let os_name = entry.file_name();
+        let Some(file_name) = os_name.to_str() else {
+            continue;
+        };
+        if file_name.ends_with(".zsh-theme") && entry.path().is_file() {
+            found.push(file_name.trim_end_matches(".zsh-theme").to_string());
+        }
+    }
+    (found.len() == 1).then(|| format!("{name}/{}", found[0]))
+}
+fn list_custom_dirs(root: &Path) -> Vec<String> {
+    fs::read_dir(root)
+        .ok()
+        .into_iter()
+        .flatten()
+        .filter_map(|e| e.ok())
+        .filter(|e| e.file_type().map(|t| t.is_dir()).unwrap_or(false))
+        .filter_map(|e| e.file_name().to_str().map(String::from))
+        .filter(|n| config::component(n))
+        .collect()
+}
+fn list_themes(custom: &Path) -> Vec<String> {
+    let mut names = Vec::new();
+    let Ok(entries) = fs::read_dir(custom) else {
+        return names;
+    };
+    for entry in entries.filter_map(|e| e.ok()) {
+        let os_name = entry.file_name();
+        let Some(name) = os_name.to_str() else {
+            continue;
+        };
+        let Ok(file_type) = entry.file_type() else {
+            continue;
+        };
+        if file_type.is_file() && name.ends_with(".zsh-theme") {
+            let stem = name.trim_end_matches(".zsh-theme");
+            if config::component(stem) {
+                names.push(stem.to_string());
+            }
+        } else if file_type.is_dir() && config::component(name) {
+            let nested = entry.path().join(format!("{name}.zsh-theme"));
+            if nested.is_file() {
+                names.push(format!("{name}/{name}"));
+            }
+        }
+    }
+    names.sort();
+    names.dedup();
+    names
+}
+
+fn safe_github_url(url: &str) -> Result<String, String> {
+    let url = url.trim();
+    let rest = url
+        .strip_prefix("https://github.com/")
+        .ok_or("Only GitHub https links can be opened")?;
+    if rest.is_empty()
+        || rest.contains(['?', '#', '\\', ' ', '\n', '\r', '\t'])
+        || rest.contains("..")
+    {
+        return Err("Unsupported GitHub link".into());
+    }
+    let parts = rest.split('/').collect::<Vec<_>>();
+    if parts.len() < 2 || parts.len() > 8 || parts.iter().any(|part| !config::component(part)) {
+        return Err("Unsupported GitHub link".into());
+    }
+    Ok(format!("https://github.com/{rest}"))
 }
 
 #[cfg(test)]
@@ -1077,6 +1452,94 @@ mod tests {
         let error = manager.undo("install-1").unwrap_err();
         assert!(error.contains("Disable this plugin"));
         assert!(plugin.exists());
+    }
+
+    #[test]
+    fn snapshot_lists_official_plugins_and_themes() {
+        let dir = tempfile::tempdir().unwrap();
+        let home = dir.path().to_path_buf();
+        fs::write(
+            home.join(".zshrc"),
+            "ZSH_THEME=\"robbyrussell\"\nplugins=(git)\n",
+        )
+        .unwrap();
+        let plugin = home.join(".oh-my-zsh/plugins/git");
+        fs::create_dir_all(&plugin).unwrap();
+        fs::write(
+            plugin.join("README.md"),
+            "# git\nGit aliases and completions\n",
+        )
+        .unwrap();
+        fs::create_dir_all(home.join(".oh-my-zsh/themes")).unwrap();
+        fs::write(
+            home.join(".oh-my-zsh/themes/robbyrussell.zsh-theme"),
+            "# prompt\n",
+        )
+        .unwrap();
+        let custom_theme = home.join(".oh-my-zsh/custom/themes/powerlevel10k");
+        fs::create_dir_all(&custom_theme).unwrap();
+        fs::write(custom_theme.join("powerlevel10k.zsh-theme"), "# p10k\n").unwrap();
+        let mut manager = Manager {
+            env: Environment::at(home).unwrap(),
+            plans: HashMap::new(),
+            journal: vec![],
+            journal_path: dir.path().join("history.json"),
+        };
+        let snapshot = manager.snap().unwrap();
+        assert_eq!(snapshot.official_plugins[0].name, "git");
+        assert_eq!(
+            snapshot.official_plugins[0].summary,
+            "Git aliases and completions"
+        );
+        assert!(
+            !snapshot.themes.iter().any(|t| t == "robbyrussell"),
+            "official themes stay out of the configuration picker"
+        );
+        assert!(snapshot
+            .themes
+            .iter()
+            .any(|t| t == "powerlevel10k/powerlevel10k"));
+        assert_eq!(
+            manager
+                .plugin_readme("git")
+                .unwrap()
+                .contains("Git aliases"),
+            true
+        );
+    }
+
+    #[test]
+    fn checkout_kind_is_detected_from_plugin_or_theme_files() {
+        let dir = tempfile::tempdir().unwrap();
+        let plugin = dir.path().join("extract");
+        fs::create_dir_all(&plugin).unwrap();
+        assert!(!omz_plugin_file(&plugin, "extract"));
+        fs::write(plugin.join("extract.plugin.zsh"), "#\n").unwrap();
+        assert!(omz_plugin_file(&plugin, "extract"));
+        let theme = dir.path().join("spaceship-prompt");
+        fs::create_dir_all(&theme).unwrap();
+        fs::write(theme.join("spaceship.zsh-theme"), "#\n").unwrap();
+        assert_eq!(
+            theme_literal_in(&theme, "spaceship-prompt").as_deref(),
+            Some("spaceship-prompt/spaceship")
+        );
+        let named = dir.path().join("hyperzsh");
+        fs::create_dir_all(&named).unwrap();
+        fs::write(named.join("hyperzsh.zsh-theme"), "#\n").unwrap();
+        assert_eq!(
+            theme_literal_in(&named, "hyperzsh").as_deref(),
+            Some("hyperzsh/hyperzsh")
+        );
+    }
+
+    #[test]
+    fn github_links_are_limited_to_safe_https_paths() {
+        assert!(
+            safe_github_url("https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/git").is_ok()
+        );
+        assert!(safe_github_url("https://evil.example/ohmyzsh/ohmyzsh").is_err());
+        assert!(safe_github_url("https://github.com/ohmyzsh/ohmyzsh/../../etc/passwd").is_err());
+        assert!(safe_github_url("https://github.com/ohmyzsh/ohmyzsh?q=1").is_err());
     }
 
     #[test]

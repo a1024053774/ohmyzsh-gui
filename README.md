@@ -1,25 +1,107 @@
 # ohmyzsh-gui
 
-A personal cross-platform desktop MVP for inspecting and safely managing `.zshrc` and Oh My Zsh plugins.
+桌面端管理 Oh My Zsh 插件、主题和 `.zshrc`。每次修改都会先预览、备份，并通过 `zsh -n` 后再写入。
 
-## Technology
+A desktop app for Oh My Zsh plugins, themes, and `.zshrc`. Every change is previewed, backed up, and syntax-checked before Apply.
 
-The app uses Tauri 2 with a Rust core and a lightweight HTML/CSS/JavaScript frontend. Rust owns file access, syntax validation, backups, Git operations, and token storage; the frontend provides an Apple-inspired sidebar, list/detail marketplace, update review, badges, toolbar, keyboard-friendly controls, and light/dark system appearance.
+**1.0** · Tauri 2 · macOS / Windows / Linux · [English](#english) · [简体中文](#简体中文)
 
-The layout follows the Apple Human Interface Guidelines for [sidebars](https://developer.apple.com/design/human-interface-guidelines/sidebars), [settings](https://developer.apple.com/design/human-interface-guidelines/settings), [toolbars](https://developer.apple.com/design/human-interface-guidelines/toolbars), and [feedback](https://developer.apple.com/design/human-interface-guidelines/feedback), with the supplied Homebrew window as a practical reference. The supplied light and dark logo assets are used in the app brand and desktop bundles. Discover loads GitHub recommendations by star count and supports source, availability, freshness, and name sorting, while each result shows its description, star count, license, and update time.
+<p align="center">
+  <img src="src-tauri/icons/128x128.png" width="72" alt="ohmyzsh-gui">
+</p>
 
-Appearance defaults to the system setting and can be overridden with Light or Dark in Settings. The interface follows Apple’s [Dark Mode guidance](https://developer.apple.com/design/human-interface-guidelines/dark-mode) and provides English, Simplified Chinese, and system language selection. Liquid Glass is implemented as a restrained webview material with `backdrop-filter`, a user-facing opt-out, and a reduced-transparency fallback. This follows Apple’s guidance to use Liquid Glass sparingly and to adapt when transparency or motion accessibility settings reduce effects; the native reference is [Applying Liquid Glass to custom views](https://developer.apple.com/documentation/SwiftUI/Applying-Liquid-Glass-to-custom-views).
+## Screenshots
 
-The configuration and plugin-management flows take cues from [ShellCraft](https://github.com/omarshahine/ShellCraft): read the real dotfile, expose only recognized values as structured controls, preserve the rest of the source, and keep reversible backups. The Discover and Installed split view follows the browse/select/detail pattern used by [omz-plugin-browser](https://github.com/hernanmd/omz-plugin-browser), with repository avatars, descriptions, stars, and direct GitHub links.
+Overview
 
-## Run
+<img src="docs/screenshots/overview.png" width="920" alt="Overview">
 
-Install the Tauri CLI, then run `cargo tauri dev` from the repository root. For a browser-only visual preview, run `npm run dev` and open `http://localhost:1420`; preview mode uses a safe in-memory `.zshrc` fixture and explicitly refuses Apply, token storage, and GitHub requests.
+Installed plugins
 
-## Safety boundary
+<img src="docs/screenshots/installed.png" width="920" alt="Installed plugins">
 
-The app never changes `.zshrc` without an explicit Apply action. It creates a backup, writes a temporary file, validates with `zsh -n`, and replaces the original only after validation succeeds. GitHub plugin sources are restricted to owner/repository components; install/update/uninstall require confirmation. Installed checkouts record their repository and exact commit SHA, and the current SHA is shown when the checkout is rediscovered. Activity records backup/quarantine paths and offers Undo for configuration, install, remove, and updates when the journal has both commit SHAs; live update rollback against a remote checkout remains an acceptance check. GitHub Token is optional and stored through the platform credential store (Keychain on macOS, Credential Manager on Windows, Secret Service on Linux); anonymous search remains available when that store is unavailable. Plugin code is never executed by the manager.
+Discover on GitHub
 
-## Validation
+<img src="docs/screenshots/discover.png" width="920" alt="Discover plugins">
 
-`node --check src/app.js` and `cargo test --manifest-path src-tauri/Cargo.toml` validate the frontend syntax and Rust parsing/safety core. `cargo check --manifest-path src-tauri/Cargo.toml` validates the Tauri backend. The current offline suite has 11 passing tests; `cargo test --manifest-path src-tauri/Cargo.toml -- --ignored` runs the separate temporary-HOME live GitHub lifecycle smoke test. `cargo tauri build --debug --bundles app` produces the local macOS `.app` bundle. Full signing and DMG distribution require additional platform SDKs and signing setup.
+Configuration
+
+<img src="docs/screenshots/configuration.png" width="920" alt="Configuration">
+
+Updates
+
+<img src="docs/screenshots/updates.png" width="920" alt="Plugin updates">
+
+Settings
+
+<img src="docs/screenshots/settings.png" width="920" alt="Settings">
+
+## 简体中文
+
+### 能做什么
+
+- 读取真实的 `~/.zshrc`，只改已识别的 `ZSH_THEME` 和 `plugins=()`，其余内容原样保留
+- 启用 / 停用官方 Oh My Zsh 插件
+- 在发现页搜索并安装 GitHub 插件和主题（主题进入 `custom/themes`，不会误写入 `plugins=()`）
+- 应用前先看 diff，确认后备份并做 zsh 语法检查
+- 应用成功后打开一个**新终端**加载配置（已打开的窗口不会自动刷新）
+- 在活动页查看备份并撤销
+- 可选 GitHub Token，保存在系统钥匙串；不填也能匿名搜索
+
+### 从源码运行
+
+需要已安装 [Oh My Zsh](https://ohmyz.sh)、`git`、`zsh`，以及 [Rust](https://rustup.rs)。
+
+```bash
+cargo install tauri-cli --version "^2"
+cargo tauri dev
+```
+
+打包本地应用：
+
+```bash
+cargo tauri build
+```
+
+产物在 `src-tauri/target/release/bundle/`。签名和公证需要额外的 Apple / 平台证书。
+
+浏览器预览（只读，不会改你的 shell）：
+
+```bash
+npm run dev
+```
+
+然后打开 `http://localhost:1420`。
+
+### 注意
+
+- 正在运行的终端不会自动 `source ~/.zshrc`。看效果请用应用弹出的新窗口。
+- 若 `~/.zshrc` 里还有 Powerlevel10k instant prompt 和 `source ~/.p10k.zsh`，只改 `ZSH_THEME` 不会换掉 p10k 提示符。
+- `zsh-snap`、`zinit`、`antigen` 这类管理器不是 Oh My Zsh 插件，不能放进 `plugins=()`。
+
+## English
+
+### Features
+
+- Reads the real `~/.zshrc` and only rewrites recognized `ZSH_THEME` / `plugins=()` values
+- Enable or disable official Oh My Zsh plugins
+- Search GitHub and install plugins or themes (themes go to `custom/themes`, not `plugins=()`)
+- Preview a diff, backup, validate with `zsh -n`, then Apply
+- Opens a **new terminal** after Apply so the change actually loads
+- Activity history with backups and Undo
+- Optional GitHub token in the OS credential store; anonymous search still works
+- English, Simplified Chinese, or system language; light / dark / system appearance
+
+### Safety
+
+The app never writes `.zshrc` without an explicit Apply. It creates a backup, writes a temporary file, runs `zsh -n`, and replaces the original only after validation succeeds. GitHub sources are limited to `owner/repository` names. Plugin code is never executed by the manager.
+
+### Develop
+
+```bash
+cargo tauri dev
+node --check src/app.js
+cargo test --manifest-path src-tauri/Cargo.toml
+```
+
+`cargo test --manifest-path src-tauri/Cargo.toml -- --ignored` runs the live GitHub lifecycle smoke test in a temporary `HOME`.

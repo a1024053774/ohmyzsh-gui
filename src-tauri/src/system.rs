@@ -228,10 +228,16 @@ impl Environment {
         Ok(backup)
     }
     pub fn plugin_path(&self, name: &str) -> Result<PathBuf, String> {
+        self.managed_path("plugins", name)
+    }
+    pub fn theme_path(&self, name: &str) -> Result<PathBuf, String> {
+        self.managed_path("themes", name)
+    }
+    fn managed_path(&self, kind: &str, name: &str) -> Result<PathBuf, String> {
         if !config::component(name) {
             return Err("Invalid plugin directory name".into());
         }
-        let p = self.custom.join("plugins").join(name);
+        let p = self.custom.join(kind).join(name);
         if fs::symlink_metadata(&p).is_ok_and(|m| m.file_type().is_symlink()) {
             return Err("Linked plugin checkout is read-only".into());
         }

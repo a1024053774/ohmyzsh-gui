@@ -1,6 +1,9 @@
 # ohmyzsh-gui
 
-English | [简体中文](README.zh-CN.md)
+<p align="center">
+  <a href="./README.md">English</a> ·
+  <a href="./README.zh-CN.md">简体中文</a>
+</p>
 
 A desktop app for Oh My Zsh plugins, themes, and `.zshrc`. Every change is previewed, backed up, and syntax-checked with `zsh -n` before Apply.
 

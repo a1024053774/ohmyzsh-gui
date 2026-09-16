@@ -69,7 +69,38 @@
 
 SHA-256 校验文件：[SHA256SUMS.txt](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/SHA256SUMS.txt)。
 
-未签名的 macOS 包第一次需要右键 → 打开。Windows SmartScreen 也可能提示。
+这些包**没有** Apple / Microsoft 签名和公证。macOS 会触发「无法验证开发者」，Windows 会触发 SmartScreen，这是正常的。
+
+### macOS（隐私与安全性）
+
+1. 打开 `.dmg`，把 `ohmyzsh-gui.app` 拖进 **应用程序**。
+2. 第一次不要双击。在 Finder 里 **按住 Control 点按**（右键）应用 → **打开** → 再点 **打开**。
+3. 若仍被拦截：打开 **系统设置 → 隐私与安全性**，滚到 **安全性**，点 **仍要打开**（有的系统文案是 **仍要安装** / **Open Anyway**）。按提示输入开机密码。
+4. 浏览器下载的包常带隔离属性（quarantine）。这 **不是** 重签名，只是去掉「来自网络」的标记：
+
+```bash
+xattr -dr com.apple.quarantine /Applications/ohmyzsh-gui.app
+```
+
+若提示没有权限，再加 `sudo`：
+
+```bash
+sudo xattr -rd com.apple.quarantine /Applications/ohmyzsh-gui.app
+```
+
+然后再次右键 → 打开。只有在系统仍提示「已损坏、无法打开」时，才做一次本机临时签名（不是苹果开发者证书）：
+
+```bash
+codesign --force --deep --sign - /Applications/ohmyzsh-gui.app
+```
+
+### Windows（SmartScreen）
+
+运行 `.msi` 或 `setup.exe`。若出现 **Windows 已保护你的电脑**：点 **更多信息** → **仍要运行**。或在资源管理器中右键安装包 → **属性** → 勾选 **解除锁定** → **确定**，再运行。
+
+### Linux
+
+AppImage 先 `chmod +x` 再运行。`.deb` / `.rpm` 用系统包管理器安装。
 
 ## 从源码运行
 

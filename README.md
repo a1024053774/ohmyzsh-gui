@@ -69,7 +69,38 @@ Download **1.0.0** from [Releases](https://github.com/a1024053774/ohmyzsh-gui/re
 
 SHA-256 checksums: [SHA256SUMS.txt](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/SHA256SUMS.txt).
 
-Unsigned macOS builds need a right-click → Open the first time. Windows SmartScreen may show a similar prompt.
+These builds are **not signed or notarized**. macOS Gatekeeper and Windows SmartScreen will warn on first launch. That is expected.
+
+### macOS (Gatekeeper)
+
+1. Open the `.dmg` and drag `ohmyzsh-gui.app` to **Applications**.
+2. Do **not** double-click it the first time. In Finder, **Control-click** (right-click) the app → **Open** → **Open**.
+3. If macOS still blocks it, open **System Settings → Privacy & Security**, scroll to **Security**, and click **Open Anyway** (some versions say **Open Anyway** / **Still Open**). Confirm with your password if asked.
+4. If it still will not start (often after a browser download), the file has a quarantine flag. That is not a re-sign; it only removes Gatekeeper’s download mark:
+
+```bash
+xattr -rd com.apple.quarantine /Applications/ohmyzsh-gui.app
+```
+
+If that prints a permission error:
+
+```bash
+sudo xattr -rd com.apple.quarantine /Applications/ohmyzsh-gui.app
+```
+
+Then Control-click → Open again. Only if macOS still says the app is damaged, ad-hoc sign it locally (this is not an Apple Developer signature):
+
+```bash
+codesign --force --deep --sign - /Applications/ohmyzsh-gui.app
+```
+
+### Windows (SmartScreen)
+
+Run the `.msi` or `setup.exe`. If **Windows protected your PC** appears: **More info** → **Run anyway**. Or in Explorer: right-click the installer → **Properties** → check **Unblock** → **OK**, then run it again.
+
+### Linux
+
+`chmod +x` the AppImage before running it. `.deb` / `.rpm` install with the system package manager.
 
 ## Develop
 

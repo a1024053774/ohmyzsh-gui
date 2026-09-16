@@ -20,7 +20,7 @@ const copy={en:{
   'discover.source':'Source','discover.allSources':'All sources','discover.official':'Oh My Zsh','discover.github':'GitHub','discover.availability':'Availability','discover.allPlugins':'All plugins','discover.available':'Available','discover.installed':'Installed','discover.category':'Type','discover.allCategories':'All types','discover.sort':'Sort','discover.stars':'Most stars','discover.updated':'Recently updated','discover.name':'Name','discover.loading':'Loading GitHub recommendations…','discover.result':'result','discover.results':'results','discover.metadata':'Official plugins are local. GitHub results include stars, license, and update time.',
   'category.theme':'Theme','category.completion':'Completion','category.highlighting':'Highlighting','category.navigation':'Navigation','category.git':'Git','category.manager':'Manager','category.utility':'Utility',
   'overview.heading':'Overview','overview.lede':'A calm place to understand your shell before changing it.','overview.configuration':'Configuration','overview.enabled':'Enabled plugins','overview.updates':'Updates','overview.updatesUnchecked':'Not checked yet','overview.safety':'Safety','overview.safetyText':'Every change is previewed, backed up, syntax-checked, and checked for stale edits before Apply.','overview.readOnly':'Read-only notice','overview.readOnlyText':'Use the raw editor for shell forms this app cannot safely rewrite.','config.heading':'Configuration','config.recognized':'Recognized settings','config.theme':'Theme','config.plugins':'Plugins','config.pluginSearch':'Filter plugins','config.themeHint':'Installed custom themes plus the current ZSH_THEME.','config.pluginsHint':'Only plugins already enabled or installed into the custom directory.','config.preview':'Preview changes','config.apply':'Apply…','config.raw':'Raw source','config.showRaw':'Show exact .zshrc text','config.zshReady':'zsh syntax validation available','config.zshMissing':'zsh unavailable; Apply disabled','config.unavailable':'Configuration unavailable','config.refresh':'Refresh after the shell environment is ready.','installed.empty':'No plugins to manage','installed.start':'Enable an official plugin or install one from Discover.','installed.githubPlugin':'Installed GitHub plugin','installed.customPlugin':'Installed custom plugin','installed.configuredPlugin':'Named in .zshrc','installed.officialPlugin':'Bundled Oh My Zsh plugin','installed.localCheckout':'Local custom checkout','installed.select':'Select a plugin','installed.details':'Details and safe actions appear here.','common.enabled':'Enabled','common.installed':'Installed','common.official':'Official','common.reviewInstall':'Install…','common.reviewUpdate':'Update…','common.reviewUninstall':'Uninstall…','common.enable':'Enable','common.disable':'Disable','common.noResults':'No results','common.adjustFilters':'Search GitHub or adjust the filters.','common.selectPlugin':'Select a plugin','common.detailsActions':'Description, README, and safe actions appear here.','detail.source':'Source','detail.category':'Type','detail.repository':'Repository','detail.stars':'Stars','detail.license':'License','detail.updated':'Updated','detail.currentSha':'Current SHA','detail.availableSha':'Available SHA','detail.notRecorded':'Not recorded','detail.checkUpdate':'Check before update','detail.bundled':'bundled in ohmyzsh/ohmyzsh','detail.safety':'This app never sources plugin code or install scripts. Apply is always a separate confirmation.','detail.readme':'README','detail.loadReadme':'Load README','detail.loadingReadme':'Loading README…','detail.readmeError':'README could not be loaded; open the repository instead.','detail.github':'GitHub','updates.heading':'Updates','updates.lede':'Review commit changes before applying them.','updates.check':'Check for updates','updates.checking':'Checking GitHub…','updates.compare':'Comparing installed plugin commits with their recorded remotes.','updates.available':'Available updates','updates.none':'You’re up to date','updates.noneText':'No app-managed GitHub plugins need an update, or none have been installed through this app yet.','activity.heading':'Activity','activity.lede':'Backups, quarantine paths, and reversible operations.','activity.commit':'Commit','activity.previousCommit':'Previous commit','activity.backupLabel':'Backup','activity.none':'No activity yet','activity.noneText':'Applied operations will appear here.','activity.undo':'Undo','activity.restoreTitle':'Restore this backup?','activity.restoreText':'The app will restore this backup after checking the current .zshrc.','activity.backups':'Configuration backups','activity.keep':'Keep','activity.delete':'Delete','activity.restore':'Restore','status.preview':'Preview ready — review before Apply','status.applied':'Applied','status.readOnly':'Browser preview is read-only','status.review':'Review the commit and diff before Apply','status.searching':'Searching GitHub for','status.githubChecked':'GitHub checked · remaining','status.saved':'Preferences saved','status.footer':'Changes are previewed before Apply','status.searchPlaceholder':'Search plugins','status.toggleSidebar':'Toggle sidebar','status.refresh':'Refresh configuration','status.loaded':'Loaded','status.opening':'Opening GitHub…','status.newTerminal':'Opened a new terminal to load the change','status.reloadHint':'Open a new terminal window to load the change','status.notOmzPlugin':'This checkout is not an Oh My Zsh plugin, so it cannot be added to plugins=()','status.installFirst':'Install this plugin before enabling it',
-  'confirm.title':'Apply change?'
+  'confirm.title':'Apply change?','status.loading':'Loading .zshrc…','status.officialEnable':'Official plugins are enabled from Configuration or the Enable button.'
 },zh:{
   'nav.overview':'概览','nav.installed':'已安装','nav.configuration':'配置','nav.discover':'发现','nav.updates':'更新','nav.activity':'活动','nav.settings':'设置',
   'title.overview':'概览','title.installed':'已安装','title.configuration':'配置','title.discover':'发现','title.updates':'更新','title.activity':'活动',
@@ -30,10 +30,24 @@ const copy={en:{
   'discover.source':'来源','discover.allSources':'全部来源','discover.official':'Oh My Zsh','discover.github':'GitHub','discover.availability':'状态','discover.allPlugins':'全部插件','discover.available':'可安装','discover.installed':'已安装','discover.category':'类型','discover.allCategories':'全部类型','discover.sort':'排序','discover.stars':'星标最多','discover.updated':'最近更新','discover.name':'名称','discover.loading':'正在加载 GitHub 推荐…','discover.result':'个结果','discover.results':'个结果','discover.metadata':'官方插件来自本机 Oh My Zsh；GitHub 结果含星标、许可证和更新时间。',
   'category.theme':'主题','category.completion':'补全','category.highlighting':'高亮','category.navigation':'导航','category.git':'Git','category.manager':'管理器','category.utility':'功能',
   'overview.heading':'概览','overview.lede':'修改前先看清当前的 Shell 配置。','overview.configuration':'配置','overview.enabled':'已启用插件','overview.updates':'更新','overview.updatesUnchecked':'尚未检查','overview.safety':'安全性','overview.safetyText':'每次修改都会先预览、备份并通过语法检查，确认后才会应用。','overview.readOnly':'只读提示','overview.readOnlyText':'当前无法安全改写的 Shell 语法，请使用原始编辑器。','config.heading':'配置','config.recognized':'已识别的设置','config.theme':'主题','config.plugins':'插件','config.pluginSearch':'筛选插件','config.themeHint':'来自已安装的自定义主题，以及当前 .zshrc 里的 ZSH_THEME。','config.pluginsHint':'只显示已启用，或已安装到 custom 目录的插件。','config.preview':'预览修改','config.apply':'应用…','config.raw':'原始内容','config.showRaw':'查看完整 .zshrc 文本','config.zshReady':'可进行 zsh 语法验证','config.zshMissing':'未找到 zsh，无法应用修改','config.unavailable':'配置不可用','config.refresh':'刷新后重新读取 Shell 环境。','installed.empty':'没有可管理的插件','installed.start':'在配置里启用官方插件，或到发现页安装。','installed.githubPlugin':'已安装的 GitHub 插件','installed.customPlugin':'已安装的自定义插件','installed.configuredPlugin':'已写入 .zshrc','installed.officialPlugin':'Oh My Zsh 自带插件','installed.localCheckout':'本地自定义检出','installed.select':'选择一个插件','installed.details':'详情和安全操作会显示在这里。','common.enabled':'已启用','common.installed':'已安装','common.official':'官方','common.reviewInstall':'安装…','common.reviewUpdate':'更新…','common.reviewUninstall':'卸载…','common.enable':'启用','common.disable':'停用','common.noResults':'没有结果','common.adjustFilters':'搜索 GitHub 或调整筛选条件。','common.selectPlugin':'选择一个插件','common.detailsActions':'这里会显示简介、README 和安全操作。','detail.source':'来源','detail.category':'类型','detail.repository':'仓库','detail.stars':'星标','detail.license':'许可证','detail.updated':'更新','detail.currentSha':'当前 SHA','detail.availableSha':'可用 SHA','detail.notRecorded':'未记录','detail.checkUpdate':'检查更新后获取','detail.bundled':'内置于 ohmyzsh/ohmyzsh','detail.safety':'本应用不会读取或执行插件安装脚本。应用前始终需要单独确认。','detail.readme':'README','detail.loadReadme':'加载 README','detail.loadingReadme':'正在加载 README…','detail.readmeError':'README 加载失败，可以直接打开仓库。','detail.github':'GitHub','updates.heading':'更新','updates.lede':'应用更新前先查看提交变更。','updates.check':'检查更新','updates.checking':'正在检查 GitHub…','updates.compare':'正在将已安装插件与记录的远端提交进行比较。','updates.available':'可用更新','updates.none':'已经是最新','updates.noneText':'没有需要更新的 GitHub 插件，或还没有通过本应用安装过插件。','activity.heading':'活动','activity.lede':'查看备份、隔离路径和可恢复操作。','activity.commit':'提交','activity.previousCommit':'上一个提交','activity.backupLabel':'备份','activity.none':'还没有活动记录','activity.noneText':'应用过的操作会显示在这里。','activity.undo':'撤销','activity.restoreTitle':'恢复此备份？','activity.restoreText':'应用会检查当前 .zshrc 后恢复这份备份。','activity.backups':'配置备份','activity.keep':'保留','activity.delete':'删除','activity.restore':'恢复','status.preview':'预览已就绪 — 请在应用前检查','status.applied':'已应用','status.readOnly':'浏览器预览为只读模式','status.review':'请在应用前检查提交和差异','status.searching':'正在搜索 GitHub：','status.githubChecked':'GitHub 检查完成 · 剩余请求：','status.saved':'设置已保存','status.footer':'修改会在应用前预览','status.searchPlaceholder':'搜索插件','status.toggleSidebar':'折叠或展开侧边栏','status.refresh':'刷新配置','status.loaded':'已加载','status.opening':'正在打开 GitHub…','status.newTerminal':'已打开新终端以加载这次修改','status.reloadHint':'请打开一个新终端窗口来加载这次修改','status.notOmzPlugin':'这个仓库不是 Oh My Zsh 插件，不能写入 plugins=()','status.installFirst':'请先安装这个插件，再启用',
-  'confirm.title':'应用更改？'
+  'confirm.title':'应用更改？','status.loading':'正在读取 .zshrc…','status.officialEnable':'官方插件请在配置页启用，或使用启用按钮。'
 }};
 function locale(){return state.language==='auto'?(navigator.language||'').toLowerCase().startsWith('zh')?'zh':'en':state.language}
 function t(key){return copy[locale()][key]||copy.en[key]||key}
+const FALLBACK_SUMMARY_KEYS=['installed.githubPlugin','installed.customPlugin','installed.configuredPlugin','installed.officialPlugin'];
+function allCopy(keys){return keys.flatMap(k=>[copy.en[k],copy.zh[k]])}
+function isFallbackSummary(value){return Boolean(value)&&allCopy(FALLBACK_SUMMARY_KEYS).includes(value)}
+function pluginSummary(p){
+  if(p?.summary&&!isFallbackSummary(p.summary)) return p.summary;
+  if(p?.kind==='github') return t('installed.githubPlugin');
+  if(p?.kind==='local') return t('installed.customPlugin');
+  if(p?.kind==='configured') return t('installed.configuredPlugin');
+  return t('installed.officialPlugin');
+}
+function pluginSource(p){
+  if(p?.kind==='local'||allCopy(['installed.localCheckout']).includes(p?.source)) return t('installed.localCheckout');
+  return p?.source||'Oh My Zsh';
+}
 function historyLabel(value){const map={configuration:locale()==='zh'?'配置':'Configuration',applied:locale()==='zh'?'已应用':'Applied',undo:locale()==='zh'?'撤销':'Undo',restored:locale()==='zh'?'已恢复':'Restored',backup_restore:locale()==='zh'?'备份恢复':'Backup restore',install:locale()==='zh'?'安装':'Install',update:locale()==='zh'?'更新':'Update',remove:locale()==='zh'?'卸载':'Remove'};return map[value]||value}
 function translateStatic(){
   document.documentElement.lang=locale()==='zh'?'zh-CN':'en';
@@ -141,7 +155,7 @@ function mergeCatalog(previous){
     next.available=old.available;
     next.stars=next.stars||old.stars;
     next.avatar=next.avatar||old.avatar;
-    next.summary=old.summary&&next.summary===t('installed.githubPlugin')?old.summary:next.summary;
+    if((!next.summary||isFallbackSummary(next.summary))&&old.summary&&!isFallbackSummary(old.summary)) next.summary=old.summary;
     next.license=next.license||old.license;
     next.updated=next.updated||old.updated;
   }
@@ -280,12 +294,12 @@ function buildCatalog(snapshot){
   const custom=customCatalog(snapshot);
   const customNames=new Set(custom.map(p=>p.name));
   const official=(snapshot.official_plugins||[]).filter(p=>!customNames.has(p.name)).map(p=>({
-    name:p.name, summary:p.summary||t('installed.officialPlugin'), source:'Oh My Zsh', kind:'official',
+    name:p.name, summary:p.summary||'', source:'Oh My Zsh', kind:'official',
     installed:true, enabled:enabled.has(p.name), repo:{owner:'ohmyzsh',name:'ohmyzsh'},
     current:null, available:null, stars:0, updated:null, avatar:null, license:'MIT'
   }));
   const missing=snapshot.values.plugins.filter(name=>!customNames.has(name)&&!official.some(p=>p.name===name)).map(name=>({
-    name, summary:t('installed.configuredPlugin'), source:'Oh My Zsh', kind:'configured',
+    name, summary:'', source:'Oh My Zsh', kind:'configured',
     installed:false, enabled:true, repo:null, current:null, available:null, stars:0, updated:null, avatar:null
   }));
   return [...official, ...custom, ...missing];
@@ -296,8 +310,8 @@ function customCatalog(snapshot){
     const x=info.find(v=>v.name===name)||{};
     const hasRepo=Boolean(x.repo);
     return {
-      name, summary:hasRepo?t('installed.githubPlugin'):t('installed.customPlugin'),
-      source:hasRepo?`GitHub · ${x.repo.owner}/${x.repo.name}`:t('installed.localCheckout'),
+      name, summary:x.summary||'',
+      source:hasRepo?`GitHub · ${x.repo.owner}/${x.repo.name}`:'',
       kind:hasRepo?'github':'local', installed:true, enabled:snapshot.values.plugins.includes(name),
       repo:x.repo||{owner:'local',name}, current:x.current_sha||null, stars:0, updated:null, avatar:null, loadable:x.loadable!==false
     };
@@ -385,7 +399,7 @@ function configuration(){
   const names=[...new Set([...workingPlugins(),...state.catalog.filter(p=>isCheckout(p)&&p.loadable!==false).map(p=>p.name)])];
   let candidates=names.map(name=>state.catalog.find(p=>p.name===name)||{name,summary:t('installed.configuredPlugin'),kind:'configured',installed:false});
   candidates.sort((a,b)=>(selected.has(b.name)-selected.has(a.name))||a.name.localeCompare(b.name));
-  if(q) candidates=candidates.filter(p=>`${p.name} ${p.summary}`.toLowerCase().includes(q));
+  if(q) candidates=candidates.filter(p=>`${p.name} ${pluginSummary(p)}`.toLowerCase().includes(q));
   const currentTheme=workingTheme();
   const themes=[...new Set([currentTheme,...(s.themes||[])].filter(Boolean))];
   $('content').innerHTML=`<section class="group"><div class="group-title">${t('config.recognized')}</div><div class="group-body">
@@ -395,7 +409,7 @@ function configuration(){
     <label class="field-label" for="plugin-filter">${t('config.plugins')}</label>
     <input id="plugin-filter" class="text-input config-search" value="${esc(state.configQuery)}" placeholder="${esc(t('config.pluginSearch'))}" />
     <p class="hint">${t('config.pluginsHint')}</p>
-    <div class="plugin-switches">${candidates.map(p=>`<label class="switch-row"><input type="checkbox" data-config-plugin value="${esc(p.name)}" ${selected.has(p.name)?'checked':''} /><span class="switch-copy"><strong>${esc(p.name)}</strong><small>${esc(p.summary||'')}</small></span>${p.kind==='official'?`<span class="badge">${t('common.official')}</span>`:p.installed||isCheckout(p)?`<span class="badge">${t('common.installed')}</span>`:''}</label>`).join('')||`<div class="empty"><strong>${t('common.noResults')}</strong></div>`}</div>
+    <div class="plugin-switches">${candidates.map(p=>`<label class="switch-row"><input type="checkbox" data-config-plugin value="${esc(p.name)}" ${selected.has(p.name)?'checked':''} /><span class="switch-copy"><strong>${esc(p.name)}</strong><small>${esc(pluginSummary(p))}</small></span>${p.kind==='official'?`<span class="badge">${t('common.official')}</span>`:p.installed||isCheckout(p)?`<span class="badge">${t('common.installed')}</span>`:''}</label>`).join('')||`<div class="empty"><strong>${t('common.noResults')}</strong></div>`}</div>
     <div class="actions"><button class="secondary" id="preview-config">${t('config.preview')}</button>${state.preview?`<button class="primary" id="apply-config">${t('config.apply')}</button>`:''}</div>
     ${state.preview?`<pre class="diff">${diffHTML(state.preview.diff)}</pre>`:''}
   </div></section>
@@ -427,8 +441,8 @@ function pluginRow(p, selected){
   return `<button class="plugin-row ${selected?'selected':''}" data-plugin="${esc(p.name)}" data-owner="${esc(p.repo?.owner||'')}" type="button">
     <span class="plugin-leading">${pluginIcon(p)}</span>
     <span class="plugin-copy"><h3><span class="name">${esc(p.name)}</span>${p.enabled?`<span class="badge orange">${t('common.enabled')}</span>`:''}</h3>
-    <p>${esc(p.summary)}</p>
-    <div class="meta"><span>${esc(p.kind==='official'?t('common.official'):p.source||'Oh My Zsh')}</span>${categoryBadge(p)}${starMetric(p.stars)}${p.updated?`<span>${esc(formatDate(p.updated))}</span>`:''}${isCheckout(p)?`<span class="badge">${t('common.installed')}</span>`:''}${externalRepo(p,true)}</div>
+    <p>${esc(pluginSummary(p))}</p>
+    <div class="meta"><span>${esc(p.kind==='official'?t('common.official'):pluginSource(p))}</span>${categoryBadge(p)}${starMetric(p.stars)}${p.updated?`<span>${esc(formatDate(p.updated))}</span>`:''}${isCheckout(p)?`<span class="badge">${t('common.installed')}</span>`:''}${externalRepo(p,true)}</div>
     </span></button>`;
 }
 function bindPluginList(rows){
@@ -443,7 +457,7 @@ function bindPluginList(rows){
 }
 function installed(){
   const q=state.search.toLowerCase();
-  const rows=installedRows().filter(p=>!q||`${p.name} ${p.summary} ${p.source||''} ${categoryLabel(p)}`.toLowerCase().includes(q));
+  const rows=installedRows().filter(p=>!q||`${p.name} ${pluginSummary(p)} ${pluginSource(p)} ${categoryLabel(p)}`.toLowerCase().includes(q));
   $('content').innerHTML=`<div class="split"><section class="list-panel">${rows.map(p=>pluginRow(p,state.selected?.name===p.name&&(state.selected?.repo?.owner||'')===(p.repo?.owner||''))).join('')||`<div class="empty"><strong>${t('installed.empty')}</strong><span>${t('installed.start')}</span></div>`}</section><section class="detail-panel">${state.selected?detail(state.selected):`<div class="empty"><strong>${t('installed.select')}</strong><span>${t('installed.details')}</span></div>`}</section></div>`;
   bindPluginList(rows);
 }
@@ -488,7 +502,7 @@ function discover(){
   if(native&&!state.recommendedLoaded&&!state.recommendationsLoading){state.recommendationsLoading=true;loadRecommendations()}
   const q=state.search.toLowerCase();
   let rows=state.catalog.filter(p=>{
-    const matchesSearch=!q||`${p.name} ${p.summary} ${p.source||''} ${categoryLabel(p)}`.toLowerCase().includes(q);
+    const matchesSearch=!q||`${p.name} ${pluginSummary(p)} ${pluginSource(p)} ${categoryLabel(p)}`.toLowerCase().includes(q);
     const matchesSource=state.sourceFilter==='all'||(state.sourceFilter==='github'&&(p.kind==='github'||p.kind==='local'))||(state.sourceFilter==='official'&&(p.kind==='official'||p.kind==='configured'));
     const matchesInstall=state.installFilter==='all'||(state.installFilter==='installed'&&isInUse(p))||(state.installFilter==='available'&&!isInUse(p));
     const matchesCategory=state.categoryFilter==='all'||pluginCategory(p)===state.categoryFilter;
@@ -529,9 +543,9 @@ function detail(p){
     :p.readmeLoading?`<p class="readme-loading">${t('detail.loadingReadme')}</p>`
     :p.readmeError?`<p class="readme-error">${t('detail.readmeError')}</p>`
     :`<button class="secondary" id="load-readme">${t('detail.loadReadme')}</button>`;
-  return `<div class="detail-heading"><span class="detail-icon">${pluginIcon(p)}</span><div><h2>${esc(p.name)}</h2><p class="summary">${esc(p.summary)}</p></div></div>
+  return `<div class="detail-heading"><span class="detail-icon">${pluginIcon(p)}</span><div><h2>${esc(p.name)}</h2><p class="summary">${esc(pluginSummary(p))}</p></div></div>
     <dl class="detail-grid">
-      <dt>${t('detail.source')}</dt><dd>${esc(p.source||'Oh My Zsh')}</dd>
+      <dt>${t('detail.source')}</dt><dd>${esc(pluginSource(p))}</dd>
       <dt>${t('detail.category')}</dt><dd>${categoryBadge(p)}</dd>
       <dt>${t('detail.repository')}</dt><dd>${esc(repo||t('detail.bundled'))} ${externalRepo(p)}</dd>
       <dt>${t('detail.stars')}</dt><dd>${p.stars?starMetric(p.stars):'—'}</dd>
@@ -586,7 +600,7 @@ async function searchGitHub(query=null){
 }
 async function loadRecommendations(){try{await searchGitHub('zsh plugin')}finally{state.recommendationsLoading=false;render()}}
 async function previewPlugin(operation,p=state.selected){
-  if(!p?.repo||p.kind==='official'){setStatus('Official plugins are enabled from Configuration or the Enable button.',true);return}
+  if(!p?.repo||p.kind==='official'){setStatus(t('status.officialEnable'),true);return}
   try{
     const r=await call({kind:'preview_plugin',operation,owner:p.repo.owner,repository:p.repo.name});
     state.preview=r.preview;
@@ -628,7 +642,7 @@ function updates(){
   document.querySelectorAll('[data-update]').forEach(b=>b.onclick=()=>{
     const x=rows[+b.dataset.update];
     let p=state.catalog.find(y=>y.repo?.owner===x.repo.owner&&y.repo?.name===x.repo.name);
-    if(!p){p={name:x.name,summary:t('installed.githubPlugin'),source:`GitHub · ${x.repo.owner}/${x.repo.name}`,kind:'github',installed:true,enabled:state.snapshot.values.plugins.includes(x.name),repo:x.repo,current:x.current_sha,available:x.available_sha,avatar:null};state.catalog.push(p)}
+    if(!p){p={name:x.name,summary:'',source:`GitHub · ${x.repo.owner}/${x.repo.name}`,kind:'github',installed:true,enabled:state.snapshot.values.plugins.includes(x.name),repo:x.repo,current:x.current_sha,available:x.available_sha,avatar:null};state.catalog.push(p)}
     else {p.current=x.current_sha;p.available=x.available_sha}
     state.selected=p;go('discover');
   });
@@ -718,7 +732,7 @@ document.addEventListener('keydown',e=>{
     $('settings-button').click();
   }
 });
-$('language-select').onchange=e=>{state.language=e.target.value;savePreference('language',state.language);render()};
+$('language-select').onchange=e=>{state.language=e.target.value;savePreference('language',state.language);if(state.snapshot) setStatus(`${t('status.loaded')} ${state.snapshot.path}`);render()};
 $('appearance-select').onchange=e=>{state.appearance=e.target.value;savePreference('appearance',state.appearance);applyPreferences();render()};
 $('glass-toggle').onchange=e=>{state.glass=e.target.checked;savePreference('glass',state.glass?'on':'off');applyPreferences()};
 $('settings-form').onsubmit=async e=>{

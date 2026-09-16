@@ -39,6 +39,8 @@ pub struct InstalledPlugin {
     pub current_sha: Option<String>,
     #[serde(default)]
     pub loadable: bool,
+    #[serde(default)]
+    pub summary: String,
 }
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Preview {
@@ -240,6 +242,7 @@ impl Manager {
                         .as_ref()
                         .map(|p| omz_plugin_file(p, name))
                         .unwrap_or(false),
+                    summary: path.as_ref().map(|p| readme_summary(p)).unwrap_or_default(),
                 }
             })
             .collect();

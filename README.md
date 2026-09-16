@@ -1,10 +1,10 @@
 # ohmyzsh-gui
 
-桌面端管理 Oh My Zsh 插件、主题和 `.zshrc`。每次修改都会先预览、备份，并通过 `zsh -n` 后再写入。
+[English](README.md) | [简体中文](README.zh-CN.md)
 
-A desktop app for Oh My Zsh plugins, themes, and `.zshrc`. Every change is previewed, backed up, and syntax-checked before Apply.
+A desktop app for Oh My Zsh plugins, themes, and `.zshrc`. Every change is previewed, backed up, and syntax-checked with `zsh -n` before Apply.
 
-**1.0** · MIT · Tauri 2 · macOS / Windows / Linux · [English](#english) · [简体中文](#简体中文)
+**1.0** · MIT · Tauri 2 · macOS / Windows / Linux
 
 <p align="center">
   <img src="src-tauri/icons/128x128.png" width="72" alt="ohmyzsh-gui">
@@ -36,52 +36,7 @@ Settings
 
 <img src="docs/screenshots/settings.png" width="920" alt="Settings">
 
-## 简体中文
-
-### 能做什么
-
-- 读取真实的 `~/.zshrc`，只改已识别的 `ZSH_THEME` 和 `plugins=()`，其余内容原样保留
-- 启用 / 停用官方 Oh My Zsh 插件
-- 在发现页搜索并安装 GitHub 插件和主题（主题进入 `custom/themes`，不会误写入 `plugins=()`）
-- 应用前先看 diff，确认后备份并做 zsh 语法检查
-- 应用成功后打开一个**新终端**加载配置（已打开的窗口不会自动刷新）
-- 在活动页查看备份并撤销
-- 可选 GitHub Token，保存在系统钥匙串；不填也能匿名搜索
-
-### 从源码运行
-
-需要已安装 [Oh My Zsh](https://ohmyz.sh)、`git`、`zsh`，以及 [Rust](https://rustup.rs)。
-
-```bash
-cargo install tauri-cli --version "^2"
-cargo tauri dev
-```
-
-打包本地应用：
-
-```bash
-cargo tauri build
-```
-
-产物在 `src-tauri/target/release/bundle/`。签名和公证需要额外的 Apple / 平台证书。
-
-浏览器预览（只读，不会改你的 shell）：
-
-```bash
-npm run dev
-```
-
-然后打开 `http://localhost:1420`。
-
-### 注意
-
-- 正在运行的终端不会自动 `source ~/.zshrc`。看效果请用应用弹出的新窗口。
-- 若 `~/.zshrc` 里还有 Powerlevel10k instant prompt 和 `source ~/.p10k.zsh`，只改 `ZSH_THEME` 不会换掉 p10k 提示符。
-- `zsh-snap`、`zinit`、`antigen` 这类管理器不是 Oh My Zsh 插件，不能放进 `plugins=()`。
-
-## English
-
-### Features
+## Features
 
 - Reads the real `~/.zshrc` and only rewrites recognized `ZSH_THEME` / `plugins=()` values
 - Enable or disable official Oh My Zsh plugins
@@ -92,19 +47,50 @@ npm run dev
 - Optional GitHub token in the OS credential store; anonymous search still works
 - English, Simplified Chinese, or system language; light / dark / system appearance
 
-### Safety
+## Safety
 
 The app never writes `.zshrc` without an explicit Apply. It creates a backup, writes a temporary file, runs `zsh -n`, and replaces the original only after validation succeeds. GitHub sources are limited to `owner/repository` names. Plugin code is never executed by the manager.
 
-### Develop
+## Install
+
+Prebuilt packages for macOS (Apple Silicon and Intel), Linux (`x86_64` and ARM64), and Windows (`x86_64` and ARM64) are attached to [Releases](https://github.com/a1024053774/ohmyzsh-gui/releases).
+
+Unsigned macOS builds need a right-click → Open the first time. Windows SmartScreen may show a similar prompt.
+
+## Develop
+
+Requires [Oh My Zsh](https://ohmyz.sh), `git`, `zsh`, and [Rust](https://rustup.rs).
 
 ```bash
+cargo install tauri-cli --version "^2"
 cargo tauri dev
 node --check src/app.js
 cargo test --manifest-path src-tauri/Cargo.toml
 ```
 
 `cargo test --manifest-path src-tauri/Cargo.toml -- --ignored` runs the live GitHub lifecycle smoke test in a temporary `HOME`.
+
+Build the native app:
+
+```bash
+cargo tauri build
+```
+
+Output is in `src-tauri/target/release/bundle/`. Signing and notarization need extra Apple / platform certificates.
+
+Read-only browser preview (does not change your shell):
+
+```bash
+npm run dev
+```
+
+Then open `http://localhost:1420`.
+
+## Notes
+
+- Running terminals do not automatically `source ~/.zshrc`. Use the new window the app opens.
+- If `~/.zshrc` still has Powerlevel10k instant prompt and `source ~/.p10k.zsh`, changing `ZSH_THEME` alone will not replace the p10k prompt.
+- Plugin managers such as `zsh-snap`, `zinit`, and `antigen` are not Oh My Zsh plugins and cannot go in `plugins=()`.
 
 ## License
 

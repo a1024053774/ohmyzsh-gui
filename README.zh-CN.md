@@ -1,8 +1,8 @@
 # ohmyzsh-gui
 
 <p align="center">
-  <a href="./README.md">English</a> ·
-  <a href="./README.zh-CN.md">简体中文</a>
+  <a href="./README.md"><img alt="English" src="https://img.shields.io/badge/English-1f6feb?style=for-the-badge"></a>
+  <a href="./README.zh-CN.md"><img alt="简体中文" src="https://img.shields.io/badge/简体中文-c41e3a?style=for-the-badge"></a>
 </p>
 
 桌面端管理 Oh My Zsh 插件、主题和 `.zshrc`。每次修改都会先预览、备份，并通过 `zsh -n` 后再写入。

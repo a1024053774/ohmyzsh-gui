@@ -1,6 +1,6 @@
 # ohmyzsh-gui
 
-[English](README.md) | [简体中文](README.zh-CN.md)
+English | [简体中文](README.zh-CN.md)
 
 A desktop app for Oh My Zsh plugins, themes, and `.zshrc`. Every change is previewed, backed up, and syntax-checked with `zsh -n` before Apply.
 
@@ -53,7 +53,18 @@ The app never writes `.zshrc` without an explicit Apply. It creates a backup, wr
 
 ## Install
 
-Prebuilt packages for macOS (Apple Silicon and Intel), Linux (`x86_64` and ARM64), and Windows (`x86_64` and ARM64) are attached to [Releases](https://github.com/a1024053774/ohmyzsh-gui/releases).
+Download **1.0.0** from [Releases](https://github.com/a1024053774/ohmyzsh-gui/releases/tag/v1.0.0). Pick the file for your OS and CPU:
+
+| Platform | Arch | File |
+| --- | --- | --- |
+| macOS | Apple Silicon | [ohmyzsh-gui_1.0.0_aarch64.dmg](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui_1.0.0_aarch64.dmg) |
+| macOS | Intel | [ohmyzsh-gui_1.0.0_x64.dmg](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui_1.0.0_x64.dmg) |
+| Linux | x86_64 | [AppImage](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui_1.0.0_amd64.AppImage) · [deb](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui_1.0.0_amd64.deb) · [rpm](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui-1.0.0-1.x86_64.rpm) |
+| Linux | ARM64 | [AppImage](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui_1.0.0_aarch64.AppImage) · [deb](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui_1.0.0_arm64.deb) · [rpm](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui-1.0.0-1.aarch64.rpm) |
+| Windows | x86_64 | [MSI](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui_1.0.0_x64_en-US.msi) · [setup.exe](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui_1.0.0_x64-setup.exe) |
+| Windows | ARM64 | [MSI](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui_1.0.0_arm64_en-US.msi) · [setup.exe](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui_1.0.0_arm64-setup.exe) |
+
+SHA-256 checksums: [SHA256SUMS.txt](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/SHA256SUMS.txt).
 
 Unsigned macOS builds need a right-click → Open the first time. Windows SmartScreen may show a similar prompt.
 

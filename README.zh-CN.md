@@ -1,6 +1,6 @@
 # ohmyzsh-gui
 
-[English](README.md) | [简体中文](README.zh-CN.md)
+[English](README.md) | 简体中文
 
 桌面端管理 Oh My Zsh 插件、主题和 `.zshrc`。每次修改都会先预览、备份，并通过 `zsh -n` 后再写入。
 
@@ -53,7 +53,18 @@
 
 ## 安装
 
-macOS（Apple Silicon 和 Intel）、Linux（`x86_64` 和 ARM64）、Windows（`x86_64` 和 ARM64）的预编译包在 [Releases](https://github.com/a1024053774/ohmyzsh-gui/releases)。
+从 [Releases](https://github.com/a1024053774/ohmyzsh-gui/releases/tag/v1.0.0) 下载 **1.0.0**，按系统和芯片选文件：
+
+| 平台 | 架构 | 文件 |
+| --- | --- | --- |
+| macOS | Apple Silicon | [ohmyzsh-gui_1.0.0_aarch64.dmg](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui_1.0.0_aarch64.dmg) |
+| macOS | Intel | [ohmyzsh-gui_1.0.0_x64.dmg](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui_1.0.0_x64.dmg) |
+| Linux | x86_64 | [AppImage](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui_1.0.0_amd64.AppImage) · [deb](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui_1.0.0_amd64.deb) · [rpm](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui-1.0.0-1.x86_64.rpm) |
+| Linux | ARM64 | [AppImage](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui_1.0.0_aarch64.AppImage) · [deb](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui_1.0.0_arm64.deb) · [rpm](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui-1.0.0-1.aarch64.rpm) |
+| Windows | x86_64 | [MSI](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui_1.0.0_x64_en-US.msi) · [setup.exe](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui_1.0.0_x64-setup.exe) |
+| Windows | ARM64 | [MSI](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui_1.0.0_arm64_en-US.msi) · [setup.exe](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/ohmyzsh-gui_1.0.0_arm64-setup.exe) |
+
+SHA-256 校验文件：[SHA256SUMS.txt](https://github.com/a1024053774/ohmyzsh-gui/releases/download/v1.0.0/SHA256SUMS.txt)。
 
 未签名的 macOS 包第一次需要右键 → 打开。Windows SmartScreen 也可能提示。
 

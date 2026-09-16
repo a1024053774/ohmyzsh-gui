@@ -1390,6 +1390,9 @@ mod tests {
         let changed = "ZSH_THEME=\"new\"\nplugins=(git brew)\n";
         fs::write(&config_path, original).unwrap();
         let env = Environment::at(home).unwrap();
+        if !env.tool_available("zsh") {
+            return;
+        }
         let backup = env.write_config(original, changed).unwrap();
         let mut manager = Manager {
             env,

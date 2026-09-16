@@ -323,6 +323,9 @@ mod tests {
         )
         .unwrap();
         let env = Environment::at(home).unwrap();
+        if !env.tool_available("zsh") {
+            return;
+        }
         let before = env.source().unwrap();
         let d = Document::parse(before.clone());
         let after = d

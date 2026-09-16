@@ -4,7 +4,7 @@
 
 A desktop app for Oh My Zsh plugins, themes, and `.zshrc`. Every change is previewed, backed up, and syntax-checked before Apply.
 
-**1.0** · Tauri 2 · macOS / Windows / Linux · [English](#english) · [简体中文](#简体中文)
+**1.0** · MIT · Tauri 2 · macOS / Windows / Linux · [English](#english) · [简体中文](#简体中文)
 
 <p align="center">
   <img src="src-tauri/icons/128x128.png" width="72" alt="ohmyzsh-gui">
@@ -105,3 +105,7 @@ cargo test --manifest-path src-tauri/Cargo.toml
 ```
 
 `cargo test --manifest-path src-tauri/Cargo.toml -- --ignored` runs the live GitHub lifecycle smoke test in a temporary `HOME`.
+
+## License
+
+[MIT](LICENSE)

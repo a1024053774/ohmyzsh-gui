@@ -2,6 +2,7 @@
   "name": "ohmyzsh-gui",
   "version": "1.0.0",
   "private": true,
+  "license": "MIT",
   "description": "Cross-platform Oh My Zsh configuration and plugin manager",
   "scripts": {
     "dev": "python3 -m http.server 1420 --directory src",
